@@ -1,7 +1,7 @@
-const fs = require('fs');
+const process = require('process');
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
-const uri = "mongodb+srv://raojinlin:fIajJdBqvQclBWOG@cluster0.2rqiglq.mongodb.net/?retryWrites=true&w=majority";
+const uri = process.env.MONGODB_URI;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
 
 export async function GET(request) {

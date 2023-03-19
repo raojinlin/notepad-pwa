@@ -15,9 +15,11 @@
     "@mui/material": "^5.11.13",
     "eslint": "8.36.0",
     "eslint-config-next": "13.2.4",
+    "install": "^0.13.0",
     "mongodb": "^5.1.0",
     "next": "13.2.4",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "vercel": "^28.17.0"
   }
 }
