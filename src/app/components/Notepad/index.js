@@ -66,7 +66,7 @@ export default function Notepad({ value, onChange }) {
     settingStorage.set(newSetting);
   }, [setting]);
 
-  const [current, setCurrent] = React.useState(currNoteStorage.get() || (data.length ? data[0]?.id : ''));
+  const [current, setCurrent] = React.useState(currNoteStorage.get() || (data?.length ? data[0]?.id : ''));
 
   React.useEffect(() => {
     currNoteStorage.set(current);
