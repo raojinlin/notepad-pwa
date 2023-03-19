@@ -53,6 +53,7 @@
 
 .main ul li {
   padding: 10px 20px;
+  height: 45px;
   list-style: none;
   position: relative;
   transition: 0.3s;
@@ -64,6 +65,8 @@
   background: transparent;
   outline: none;
   border: none;
+  height: 20px;
+  border-bottom: 1px solid #92869f;
 }
 
 .main ul li:hover .itemToolbar {
@@ -103,13 +106,10 @@
 .toolbar button {
   margin-right: 15px;
   color: #ffffff;
+}
 
-  /*margin-top: 5px;*/
-  /*border: 1px solid #eeeeee;*/
-  /*background: #fff;*/
-  /*color: #333;*/
-  /*outline: none;*/
-  /*padding: 0 15px;*/
+.toolbar button .MuiSvgIcon-root {
+  margin-right: 5px;
 }
 
 .toolbar button:hover {

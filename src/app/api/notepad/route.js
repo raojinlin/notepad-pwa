@@ -23,6 +23,7 @@ export async function POST(request, res) {
 
   const db = client.db('notepad');
   await client.connect();
+  delete body._id;
   let r = await db.collection('data').updateOne({id: body.id}, {$set: body}, {upsert: true});
   await client.close()
   return new Response(JSON.stringify(r));

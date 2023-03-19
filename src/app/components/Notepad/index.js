@@ -9,7 +9,7 @@ import {
   DialogActions,
   DialogContentText,
   FormControlLabel,
-  ListItemButton, List, CircularProgress
+  ListItemButton, List, CircularProgress, Box, Tooltip
 } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import DownloadIcon from '@mui/icons-material/Download';
@@ -41,7 +41,13 @@ const debounce = (func, timeout) => {
   };
 };
 
-export default function Notepad({ value, onChange }) {
+const defaultEndpoint = {
+  delete: '/api/notepad',
+  upsert: '/api/notepad',
+  query: '/api/notepad',
+}
+
+export default function Notepad({ endpoint=defaultEndpoint }) {
   const [data, setData] = React.useState([]);
   const [dialogOpen, setDialogOpen] = React.useState(false);
   const [syncing, setSyncing] = React.useState(false);
@@ -74,7 +80,7 @@ export default function Notepad({ value, onChange }) {
   }, [current]);
 
   const fetcher = React.useRef(debounce((val, current, data) => {
-    return fetch('/api/notepad', {
+    return fetch(endpoint.upsert, {
       method: 'POST',
       headers: {
         'content-type': 'application/json',
@@ -115,7 +121,7 @@ export default function Notepad({ value, onChange }) {
       note: e.target.value
     };
 
-    handleDataChange(newData);
+    handleDataChange(newData.sort((a, b) => b.lastUpdateAt - a.lastUpdateAt));
     if (setting.autoSync) {
       handleUpload(newData[index]);
     }
@@ -140,7 +146,7 @@ export default function Notepad({ value, onChange }) {
     }
 
     if (setting.autoSync) {
-      fetch('/api/notepad?id=' + current, {
+      fetch(endpoint.delete + '?id=' + current, {
         method: 'DELETE'
       }).then(r => {
         console.log(r);
@@ -148,7 +154,7 @@ export default function Notepad({ value, onChange }) {
         console.error(err);
       });
     }
-  }, [data, current, setting]);
+  }, [data, current, setting, endpoint]);
 
   const handleDownloadCurrent = React.useCallback((current) => {
     const note = data.find(it => it.id === current);
@@ -188,7 +194,7 @@ export default function Notepad({ value, onChange }) {
           <h3>Notepad</h3>
         </div>
         <div className={styles.toolbar}>
-          <div className={styles.tools}>
+          <Box className={styles.tools} sx={{'& .MuiSvgIcon-root': {marginRight: '5px'}}}>
             <Button type='button' variant='text' onClick={handleNew}><AddIcon /> 新建笔记</Button>
             <Button type='button' variant='text' onClick={_ => setCloudNoteOpen(true)}>
               <CloudIcon style={{marginRight: '5px'}} /> 云笔记
@@ -215,7 +221,7 @@ export default function Notepad({ value, onChange }) {
               }
             </span>
 
-          </div>
+          </Box>
           <div className={styles.options}>
             <FormControlLabel
               label={'自动上传'}
@@ -255,8 +261,16 @@ export default function Notepad({ value, onChange }) {
                   <span className={styles.noteName}>{item.name}</span>
                 }
                 <div className={styles.itemToolbar}>
-                  <span><a href='####' onClick={_ => handleDelete()}><DeleteForeverIcon /></a> </span>
-                  <span><a href='####' onClick={_ => handleDownloadCurrent(item.id)}><DownloadIcon /></a> </span>
+                  <a href='####' onClick={_ => handleDelete()}>
+                    <Tooltip title='删除'>
+                      <DeleteForeverIcon />
+                    </Tooltip>
+                  </a>
+                  <a href='####' onClick={_ => handleDownloadCurrent(item.id)}>
+                     <Tooltip title={'下载笔记'}>
+                       <DownloadIcon />
+                     </Tooltip>
+                  </a>
                 </div>
               </li>
             )
@@ -307,7 +321,7 @@ export default function Notepad({ value, onChange }) {
           <Button onClick={_ => setDialogOpen(false)}>关闭</Button>
         </DialogActions>
       </Dialog>
-      <CloudNote open={cloudNoteOpen} onClose={setCloudNoteOpen} onChange={handleNoteExport} />
+      <CloudNote endpoint={endpoint} open={cloudNoteOpen} onClose={setCloudNoteOpen} onChange={handleNoteExport} />
     </div>
   );
 }

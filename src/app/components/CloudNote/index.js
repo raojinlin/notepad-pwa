@@ -11,6 +11,7 @@ import DownloadIcon from '@mui/icons-material/Download';
 import CloudIcon from '@mui/icons-material/Cloud';
 import CloseIcon from '@mui/icons-material/Close';
 import {ListItemButton, Skeleton, List} from "@mui/material";
+import {now} from "@/app/components/Notepad/utils";
 
 const BootstrapDialog = styled(Dialog)(({ theme }) => ({
   '& .MuiDialogContent-root': {
@@ -62,7 +63,7 @@ BootstrapDialogTitle.propTypes = {
   onClose: PropTypes.func.isRequired,
 };
 
-export default function CustomizedDialogs({ open: isOpen, onChange, onClose }) {
+export default function CustomizedDialogs({ open: isOpen, onChange, onClose, endpoint={} }) {
   const [open, setOpen] = React.useState(isOpen);
   const [notes, setNotes] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
@@ -74,7 +75,7 @@ export default function CustomizedDialogs({ open: isOpen, onChange, onClose }) {
     }
 
     setLoading(true);
-    fetch('/api/notepad/').then(r => r.json()).then(r => {
+    fetch(endpoint.query).then(r => r.json()).then(r => {
       setNotes(r);
       setLoading(false);
     });
@@ -118,6 +119,9 @@ export default function CustomizedDialogs({ open: isOpen, onChange, onClose }) {
                   <div style={{display: 'flex', width: '100%'}}>
                     <div style={{flex: 1}}>{note.name}</div>
                     <div>
+                      <span style={{verticalAlign: 'top', fontSize: '14px', marginRight: '15px'}}>
+                        {now(note.lastUpdateAt)}
+                      </span>
                       <DownloadIcon onClick={_ => handleChange(note)} style={{color: '#655965'}} />
                     </div>
                   </div>
