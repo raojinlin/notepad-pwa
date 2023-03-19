@@ -50,8 +50,8 @@ export default function Notepad({ value, onChange }) {
   const [cloudNoteOpen, setCloudNoteOpen] = React.useState(false);
 
   React.useEffect(() => {
-    setData(dataStorage.get());
-    setSetting(settingStorage.get());
+    setData(dataStorage.get() || []);
+    setSetting(settingStorage.get() || []);
   }, []);
 
   const handleDataChange = React.useCallback(newData => {
@@ -176,6 +176,7 @@ export default function Notepad({ value, onChange }) {
     }
     setData(newData);
     setCurrent(note.id);
+    handleDataChange(newData);
   }, [data]);
 
   const getCurrent = () => data.find(it => it.id === current);
