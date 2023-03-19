@@ -1,0 +1,181 @@
+.notepad {
+  font-size: 14px;
+}
+
+.header {
+  display: flex;
+  padding: 15px 25px;
+  border-bottom: 1px solid #eeeeee;
+  background: #92869f;
+  color: #fff;
+}
+
+.title {
+  width: 270px;
+  line-height: 36px;
+  color: #eeeeee;
+}
+
+.textarea {
+  padding: 10px 20px;
+  height: 650px;
+  padding-top: 0;
+}
+
+.itemToolbar {
+  display: none;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 100px;
+  text-align: right;
+}
+
+.itemToolbar a {
+  font-size: 12px;
+  color: #666666;
+}
+
+.itemToolbar a svg {
+  font-size: 17px;
+}
+
+.main {
+  display: flex;
+}
+
+.main ul {
+  width: 270px;
+  border-right: 1px solid #eee;
+  padding: 10px 0 10px 0;
+  height: 100vh;
+}
+
+.main ul li {
+  padding: 10px 20px;
+  list-style: none;
+  position: relative;
+  transition: 0.3s;
+  margin: 1px 15px;
+  border-radius: 5px;
+}
+
+.main ul li input {
+  background: transparent;
+  outline: none;
+  border: none;
+}
+
+.main ul li:hover .itemToolbar {
+  display: block;
+}
+
+.textarea {
+  flex: 1;
+  height: 100vh;
+}
+
+.textarea textarea {
+  resize: none;
+  width: 100%;
+  padding: 24px;
+  outline: none;
+  height: 100%;
+  border: none;
+  font-family: "IBM Plex Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+.toolbar {
+  display: flex;
+  flex: 1;
+}
+
+.tools {
+  flex: 1;
+}
+
+.options {
+  /*width: 300px;*/
+  line-height: 36px;
+  color: #ffffff;
+}
+
+.toolbar button {
+  margin-right: 15px;
+  color: #ffffff;
+
+  /*margin-top: 5px;*/
+  /*border: 1px solid #eeeeee;*/
+  /*background: #fff;*/
+  /*color: #333;*/
+  /*outline: none;*/
+  /*padding: 0 15px;*/
+}
+
+.toolbar button:hover {
+  background: rgb(104 116 101 / 30%)!important;
+}
+
+.toolbar button.Mui-disabled {
+  color: rgb(193 189 216 / 80%);
+}
+
+.noteName {
+  text-overflow: ellipsis;
+  word-break: break-all;
+  overflow: hidden;
+  white-space: nowrap;
+  display: inline-block;
+  width: 130px;
+}
+
+
+.current {
+  background: #eeeeee;
+}
+
+.current .itemToolbar {
+  display: block;
+}
+
+.mobileView {
+  display: none!important;
+}
+
+@media (max-width: 1023px) {
+  .title {
+    display: none;
+  }
+
+  .main ul {
+    display: none;
+  }
+
+
+  .mobileView {
+    display: inline-flex!important;
+  }
+
+  .proc {
+    display: block;
+    margin-left: 10px;
+  }
+}
+
+
+.lastUpdate {
+  color: #e7e0e0;
+  font-size: 13px;
+}
+
+.loading {
+  width: 15px!important;
+  height: 15px!important;
+  margin-left: 10px;
+  position: relative;
+  top: 3px;
+  color: #ffffff;
+}
+
+.MuiButtonBase-root.MuiButton-root.MuiButton-text:hover {
+}
