@@ -1,4 +1,3 @@
-import styles from './page.module.css'
 import Notepad from "@/app/components/Notepad";
 
 
