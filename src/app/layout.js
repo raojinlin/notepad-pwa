@@ -18,6 +18,7 @@ export default function RootLayout({ children }) {
         />
         <meta name="description" content="Description" />
         <meta name="keywords" content="Keywords" />
+        <meta name="theme-color" content="#92869f" />
         <title>Next.js PWA Example</title>
 
         <link rel="manifest" href="/manifest.json" />
