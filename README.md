@@ -17,7 +17,7 @@ Notepad 是一个基于 Web 的轻量级笔记应用程序，支持本地离线�
 
 ## 安装
 
-1. 访问网址 https://notepad-nine.vercel.app/。
+1. 访问网址 [https://notepad-nine.vercel.app/](https://notepad-nine.vercel.app/)
 ![](./screenshots/notepad-install-setp1.png)
 2. 在右上角会出现一个安装提示，点击它安装应用。
 ![](./screenshots/notepad-install-setp2.png)
