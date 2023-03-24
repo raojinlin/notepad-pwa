@@ -38,5 +38,6 @@ export async function DELETE(request) {
   const db = client.db('notepad');
   await client.connect();
   let r = await db.collection('data').deleteOne({id: id});
+  await client.close();
   return new Response(JSON.stringify(r), {headers: {'content-type': 'application/json'}});
 }
