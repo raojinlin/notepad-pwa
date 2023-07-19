@@ -33,6 +33,9 @@ Web
 ![](./screenshots/mobile-note.png)
 
 
+暗色
+![](./screenshots/dark-mode.gif)
+
 ## 开发
 1. 在本地环境中运行后端应用程序所需的 MongoDB 数据库实例。
 2. 在本地克隆应用程序的代码仓库。
