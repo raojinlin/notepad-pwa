@@ -187,6 +187,30 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
 
   const getCurrent = () => data.find(it => it.id === current);
 
+  const handleSwitch = React.useCallback((e) => {
+    if (!['ArrowDown', 'ArrowUp'].includes(e.code)) {
+      return;
+    }
+
+    e.preventDefault();
+    const moveDown = e.code === 'ArrowDown';
+    const currIndex = data.findIndex(it => it.id === current);
+    let nextIndex;
+    if (moveDown) {
+      nextIndex = Math.min(currIndex + 1, data.length);
+      if (nextIndex === data.length) {
+        nextIndex = 0;
+      }
+    } else {
+      nextIndex = currIndex - 1;
+      if (nextIndex < 0) {
+        nextIndex = data.length - 1;
+      }
+    }
+
+    setCurrent(data[nextIndex]?.id);
+  }, [data, current]);
+
   return (
     <div className={styles.notepad}>
       <div className={styles.header}>
@@ -239,7 +263,7 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
         </div>
       </div>
       <div className={styles.main}>
-        <ul>
+        <ul onKeyDown={handleSwitch} tabIndex={0}>
           {data.map((item, i) => {
             return (
               <li

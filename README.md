@@ -99,7 +99,3 @@ MONGODB_URI=<你的 MongoDB 数据库 URI>
 请将 MONGODB_URI 替换为你的 MongoDB 数据库的实际 URI。
 
 4. 部署应用程序。
-
-
-## Tanks
-感谢ChatGPT，帮忙生成对本README的指导。
