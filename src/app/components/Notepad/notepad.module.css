@@ -186,16 +186,16 @@
 }
 
 @media (prefers-color-scheme: dark) {
-  .autoDarkTheme .header, .autoDarkTheme .main ul {
+  .header, .main ul {
     background: #1d1c1c;
     border-color: #2d2c2c;
   }
 
-  .autoDarkTheme .main .current {
+  .main .current {
     background: #3b3b3b;
   }
 
-  .autoDarkTheme textarea, .autoDarkTheme .textarea {
+  .main textarea, .textarea {
     background: #1d1c1c;
   }
 }
