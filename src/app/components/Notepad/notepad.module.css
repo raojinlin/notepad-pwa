@@ -61,6 +61,11 @@
   border-radius: 5px;
 }
 
+.main ul:focus,
+.main ul li:focus {
+  outline: none;
+}
+
 .main ul li input {
   background: transparent;
   outline: none;
@@ -178,4 +183,19 @@
 }
 
 .MuiButtonBase-root.MuiButton-root.MuiButton-text:hover {
+}
+
+@media (prefers-color-scheme: dark) {
+  .header, .main ul {
+    background: #1d1c1c;
+    border-color: #2d2c2c;
+  }
+
+  .main .current {
+    background: #3b3b3b;
+  }
+
+  .main textarea, .textarea {
+    background: #1d1c1c;
+  }
 }

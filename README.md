@@ -33,6 +33,9 @@ Web
 ![](./screenshots/mobile-note.png)
 
 
+暗色
+![](./screenshots/dark-mode.gif)
+
 ## 开发
 1. 在本地环境中运行后端应用程序所需的 MongoDB 数据库实例。
 2. 在本地克隆应用程序的代码仓库。
@@ -99,7 +102,3 @@ MONGODB_URI=<你的 MongoDB 数据库 URI>
 请将 MONGODB_URI 替换为你的 MongoDB 数据库的实际 URI。
 
 4. 部署应用程序。
-
-
-## Tanks
-感谢ChatGPT，帮忙生成对本README的指导。
