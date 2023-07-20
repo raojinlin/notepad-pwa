@@ -1,0 +1,10 @@
+version: "3"
+services:
+  mongodb:
+    image: mongodb/mongodb-community-server:latest
+  notepad:
+    depends_on:
+    - mongodb
+    build:
+      dockerfile: ./Dockerfile
+      context: ./
