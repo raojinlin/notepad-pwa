@@ -187,13 +187,44 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
 
   const getCurrent = () => data.find(it => it.id === current);
 
+  const editorRef = React.useRef();
+  const handleToEditor = React.useCallback((e) => {
+    if (!editorRef.current) {
+      return;
+    }
+
+    if (e.code === 'ArrowRight') {
+      editorRef.current.focus();
+      return;
+    }
+
+    if (controlKeyDownRef.current && e.key === 'l') {
+      editorRef.current.focus();
+    }
+
+  }, []);
+
+  const controlKeyDownRef = React.useRef(false);
   const handleSwitch = React.useCallback((e) => {
-    if (!['ArrowDown', 'ArrowUp'].includes(e.code)) {
+    if (e.key === 'Control') {
+      controlKeyDownRef.current = true;
+    }
+
+    handleToEditor(e);
+    let moveDown = e.code === 'ArrowDown';
+    // Up: control + p
+    // Down: control + n
+    if (controlKeyDownRef.current) {
+      if (!['n', 'p'].includes(e.key)) {
+        return;
+      }
+
+      moveDown = e.key === 'n';
+    } else if (!['ArrowDown', 'ArrowUp'].includes(e.code)) {
       return;
     }
 
     e.preventDefault();
-    const moveDown = e.code === 'ArrowDown';
     const currIndex = data.findIndex(it => it.id === current);
     let nextIndex;
     if (moveDown) {
@@ -210,6 +241,12 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
 
     setCurrent(data[nextIndex]?.id);
   }, [data, current]);
+
+  const handleControlKeyup = React.useCallback(e => {
+    if (e.key === 'Control') {
+      controlKeyDownRef.current = false;
+    }
+  }, []);
 
   return (
     <div className={styles.notepad}>
@@ -263,7 +300,7 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
         </div>
       </div>
       <div className={styles.main}>
-        <ul onKeyDown={handleSwitch} tabIndex={0}>
+        <ul onKeyDown={handleSwitch} onKeyUp={handleControlKeyup} tabIndex={0}>
           {data.map((item, i) => {
             return (
               <li
@@ -302,6 +339,7 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
         </ul>
         <div className={styles.textarea}>
           <textarea
+            ref={editorRef}
             onFocus={_ => setCurrent(current)}
             disabled={data.length === 0 || current < 0}
             value={data ? data.find(it => it.id === current)?.note : '' || ''}
