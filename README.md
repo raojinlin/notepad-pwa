@@ -92,6 +92,8 @@ DELETE /api/notepad?id=ID
 
 
 ## 部署
+
+### 在Vercel部署
 1. 在 Vercel 中创建一个新的应用程序。
 2. 将应用程序的代码仓库链接到 Vercel 应用程序。
 3. 设置以下环境变量：
@@ -102,3 +104,19 @@ MONGODB_URI=<你的 MongoDB 数据库 URI>
 请将 MONGODB_URI 替换为你的 MongoDB 数据库的实际 URI。
 
 4. 部署应用程序。
+
+
+### 本地部署
+使用docker-compose部署
+
+1. 运行安装脚本
+```bash
+$ ./install.sh
+```
+
+2. 运行docker-compose
+```
+$ docker-compose up -d
+```
+
+3. 访问3000端口
