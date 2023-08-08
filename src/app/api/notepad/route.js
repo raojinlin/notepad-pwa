@@ -1,9 +1,13 @@
 const process = require('process');
 
 const { MongoClient, ServerApiVersion } = require('mongodb');
-const client = new MongoClient(process.env.MONGODB_URI || '', { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+
+function createClient() {
+  return new MongoClient(process.env.MONGODB_URI || '', { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+}
 
 export async function GET(request) {
+  const client = createClient();
   await client.connect();
 
   const data = await client.db('notepad').collection('data').find().toArray();
@@ -20,6 +24,7 @@ export async function POST(request, res) {
 
   body = JSON.parse(body);
 
+  const client = createClient();
   const db = client.db('notepad');
   await client.connect();
   delete body._id;
@@ -34,6 +39,7 @@ export async function DELETE(request) {
     return new Response('Bad Request', {status: 400});
   }
 
+  const client = createClient();
   const db = client.db('notepad');
   await client.connect();
   let r = await db.collection('data').deleteOne({id: id});
