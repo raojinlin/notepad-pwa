@@ -42,13 +42,14 @@
 
 .main {
   display: flex;
+  height: calc(100vh - 73px);
 }
 
 .main ul {
   width: 270px;
   border-right: 1px solid #eee;
   padding: 10px 0 10px 0;
-  height: 100vh;
+  overflow-y: auto;
 }
 
 .main ul li {
@@ -80,7 +81,8 @@
 
 .textarea {
   flex: 1;
-  height: 100vh;
+  height: 100%;
+  padding-right: 0;
 }
 
 .textarea textarea {

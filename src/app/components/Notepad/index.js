@@ -322,12 +322,12 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
                   <span className={styles.noteName}>{item.name}</span>
                 }
                 <div className={styles.itemToolbar}>
-                  <a href='####' onClick={_ => handleDelete()}>
+                  <a href='javascript:;' onClick={_ => handleDelete()}>
                     <Tooltip title='删除'>
                       <DeleteForeverIcon />
                     </Tooltip>
                   </a>
-                  <a href='####' onClick={_ => handleDownloadCurrent(item.id)}>
+                  <a href='javascript:;' onClick={_ => handleDownloadCurrent(item.id)}>
                      <Tooltip title={'下载笔记'}>
                        <DownloadIcon />
                      </Tooltip>
