@@ -339,7 +339,7 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
           })}
         </ul>
         <div className={styles.textarea}>
-          <Box sx={{'& .MuiSvgIcon-root': {color: 'yellowgreen', position: 'relative', top: 5, marginRight: '5px'}}}>
+          <Box sx={{'& .MuiSvgIcon-root': {color: 'yellowgreen', position: 'relative', top: 5, marginRight: '5px'}, '&': {height: '100%'}}}>
             {data.length === 0 ? (
               <div className={styles.warning}>
                 <WarningIcon />
