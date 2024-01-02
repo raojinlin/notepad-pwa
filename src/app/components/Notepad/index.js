@@ -18,6 +18,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import BackupIcon from '@mui/icons-material/Backup';
 import CloudIcon from '@mui/icons-material/Cloud';
 import StorageIcon from '@mui/icons-material/Storage';
+import WarningIcon from '@mui/icons-material/Warning';
 
 import styles from './notepad.module.css';
 import CloudNote from '../CloudNote';
@@ -338,13 +339,22 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
           })}
         </ul>
         <div className={styles.textarea}>
-          <textarea
-            ref={editorRef}
-            onFocus={_ => setCurrent(current)}
-            disabled={data.length === 0 || current < 0}
-            value={data ? data.find(it => it.id === current)?.note : '' || ''}
-            onChange={handleNoteChange}
-          />
+          <Box sx={{'& .MuiSvgIcon-root': {color: 'yellowgreen', position: 'relative', top: 5, marginRight: '5px'}}}>
+            {data.length === 0 ? (
+              <div className={styles.warning}>
+                <WarningIcon />
+                还有没添加笔记，<a href='javascript:;' onClick={handleNew}>新建一个</a>。
+              </div>
+            ) : (
+              <textarea
+                ref={editorRef}
+                onFocus={_ => setCurrent(current)}
+                disabled={data.length === 0 || current < 0}
+                value={data ? data.find(it => it.id === current)?.note : '' || ''}
+                onChange={handleNoteChange}
+              />
+            )} 
+          </Box>
         </div>
       </div>
       <Dialog
