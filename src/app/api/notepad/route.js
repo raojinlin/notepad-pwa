@@ -3,7 +3,14 @@ const process = require('process');
 const { MongoClient, ServerApiVersion } = require('mongodb');
 
 function createClient() {
-  return new MongoClient(process.env.MONGODB_URI || '', { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
+  return new MongoClient(
+    process.env.MONGODB_URI || '', 
+    { 
+      useNewUrlParser: true, 
+      useUnifiedTopology: true, 
+      serverApi: ServerApiVersion.v1 
+    }
+  );
 }
 
 export async function GET(request) {

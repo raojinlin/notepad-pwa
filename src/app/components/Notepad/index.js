@@ -19,10 +19,12 @@ import BackupIcon from '@mui/icons-material/Backup';
 import CloudIcon from '@mui/icons-material/Cloud';
 import StorageIcon from '@mui/icons-material/Storage';
 import WarningIcon from '@mui/icons-material/Warning';
+import ShareIcon from '@mui/icons-material/Share';
 
 import styles from './notepad.module.css';
 import CloudNote from '../CloudNote';
 import { DataStorage, SettingStorage, CurrentNoteStorage, guid, now } from './utils';
+import Share from '../Share/Setting';
 
 
 const dataStorage = new DataStorage();
@@ -48,6 +50,8 @@ const defaultEndpoint = {
   query: '/api/notepad',
 }
 
+console.log(Share)
+
 export default function Notepad({ endpoint=defaultEndpoint }) {
   const [data, setData] = React.useState([]);
   const [dialogOpen, setDialogOpen] = React.useState(false);
@@ -55,6 +59,7 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
   const [uploaded, setUploaded] = React.useState(false);
   const [setting, setSetting] = React.useState({});
   const [cloudNoteOpen, setCloudNoteOpen] = React.useState(false);
+  const [shareOpen, setShareOpen] = React.useState(false);
 
   React.useEffect(() => {
     setData(dataStorage.get() || []);
@@ -111,7 +116,7 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
     if (setting.autoSync) {
       handleUpload(newData[index]);
     }
-  }, [data, setting]);
+  }, [data, setting, handleUpload, handleDataChange]);
 
   const handleNoteChange = React.useCallback((e) => {
     const newData = [...data];
@@ -126,14 +131,14 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
     if (setting.autoSync) {
       handleUpload(newData[index]);
     }
-  }, [data, current, setting]);
+  }, [data, current, setting, handleDataChange, handleUpload]);
 
   const handleNew = React.useCallback(() => {
     const newData = [{id: guid(), note: '', name: now(), createAt: Date.now(), lastUpdateAt: Date.now()}, ...data]
     setCurrent(newData[0].id);
     handleDataChange(newData);
     handleUpload(newData[0]);
-  }, [data]);
+  }, [data, handleUpload, handleDataChange]);
 
   const handleDelete = React.useCallback(() => {
     const currIndex = data.findIndex(it => it.id === current);
@@ -155,7 +160,7 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
         console.error(err);
       });
     }
-  }, [data, current, setting, endpoint]);
+  }, [data, current, setting, endpoint, handleDataChange]);
 
   const handleDownloadCurrent = React.useCallback((current) => {
     const note = data.find(it => it.id === current);
@@ -184,7 +189,11 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
     setData(newData);
     setCurrent(note.id);
     handleDataChange(newData);
-  }, [data]);
+  }, [data, handleDataChange]);
+
+  const handleNoteShare = React.useCallback(noteId => {
+    setShareOpen(true);
+  }, []);
 
   const getCurrent = () => data.find(it => it.id === current);
 
@@ -194,7 +203,7 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
       return;
     }
 
-    if (e.code === 'ArrowRight') {
+    if (e.code === 'ArrowRight' && !(e.nativeEvent.target instanceof HTMLInputElement)) {
       editorRef.current.focus();
       return;
     }
@@ -241,7 +250,7 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
     }
 
     setCurrent(data[nextIndex]?.id);
-  }, [data, current]);
+  }, [data, handleToEditor, current]);
 
   const handleControlKeyup = React.useCallback(e => {
     if (e.key === 'Control') {
@@ -323,6 +332,11 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
                   <span className={styles.noteName}>{item.name}</span>
                 }
                 <div className={styles.itemToolbar}>
+                  <a href='javascript:;' onClick={_ => handleNoteShare(item.id)}>
+                    <Tooltip title='分享'>
+                      <ShareIcon />
+                    </Tooltip>
+                  </a>
                   <a href='javascript:;' onClick={_ => handleDelete()}>
                     <Tooltip title='删除'>
                       <DeleteForeverIcon />
@@ -339,11 +353,23 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
           })}
         </ul>
         <div className={styles.textarea}>
-          <Box sx={{'& .MuiSvgIcon-root': {color: 'yellowgreen', position: 'relative', top: 5, marginRight: '5px'}, '&': {height: '100%'}}}>
+          <Box 
+            sx={{
+              '& .MuiSvgIcon-root': {
+                color: 'yellowgreen', 
+                position: 'relative', 
+                top: 5, 
+                marginRight: '5px'
+              }, 
+              '&': {
+                height: '100%'
+              }
+            }}
+          >
             {data.length === 0 ? (
               <div className={styles.warning}>
                 <WarningIcon />
-                还有没添加笔记，<a href='javascript:;' onClick={handleNew}>新建一个</a>。
+                还有没添加笔记，<a href='javascript:;' onClick={handleNew}>新建一个吧</a>。
               </div>
             ) : (
               <textarea
@@ -394,6 +420,7 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
         </DialogActions>
       </Dialog>
       <CloudNote endpoint={endpoint} open={cloudNoteOpen} onClose={setCloudNoteOpen} onChange={handleNoteExport} />
+      <Share open={shareOpen} onClose={_ => setShareOpen(false)} />
     </div>
   );
 }
