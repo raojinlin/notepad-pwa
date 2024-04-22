@@ -1,11 +1,11 @@
 import { NextPageContext } from "next";
 import { db, NotepadTable, NoteShareTable } from "../../../../schema";
-import { NextRequest, NextResponse } from "next/server";
+import { NextResponse } from "next/server";
 import { count, desc, eq, inArray } from "drizzle-orm";
 import groupBy from 'loadsh/groupBy'
 
 
-export const GET = async (req: NextRequest, context: NextPageContext) => {
+export const GET = async (req, context) => {
     const params = new URL(req.url).searchParams;
     console.log(params);
     const pageIndex = Number(params.get('pageIndex')) || 1; 
