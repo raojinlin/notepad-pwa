@@ -252,7 +252,7 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
       }
     }
 
-    setCurrent(data[nextIndex]?.id);
+    setCurrent(data[nextIndex]?.noteID);
   }, [data, handleToEditor, current]);
 
   const handleControlKeyup = React.useCallback(e => {
