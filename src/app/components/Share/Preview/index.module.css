@@ -22,6 +22,7 @@
 .noteContent pre {
     line-break: anywhere;
     white-space: pre-wrap;
+    font-family: Plex Sans,-apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica Neue,Arial,sans-serif,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol
 }
 
 .notfound {
