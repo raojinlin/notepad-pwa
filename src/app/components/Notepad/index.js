@@ -136,7 +136,7 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
   }, [data, current, setting, handleDataChange, handleUpload]);
 
   const handleNew = React.useCallback(() => {
-    const newData = [{noteID: guid(), note: '', name: now(), createAt: Date.now(), lastUpdateAt: Date.now()}, ...data]
+    const newData = [{noteID: guid(), content: '', name: now(), createAt: Date.now(), lastUpdateAt: Date.now()}, ...data]
     setCurrent(newData[0].noteID);
     handleDataChange(newData);
     handleUpload(newData[0]);
@@ -166,7 +166,7 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
 
   const handleDownloadCurrent = React.useCallback((current) => {
     const note = data.find(it => it.noteID === current);
-    const blob = new Blob(note.note.split(''), {type: 'text/plain'});
+    const blob = new Blob(note.content.split(''), {type: 'text/plain'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.style.visibility = 'hidden';
@@ -384,7 +384,7 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
                 ref={editorRef}
                 onFocus={_ => setCurrent(current)}
                 disabled={data.length === 0 || current < 0}
-                value={data ? data.find(it => it.noteID === current)?.note : '' || ''}
+                value={data ? data.find(it => it.noteID === current)?.content : '' || ''}
                 onChange={handleNoteChange}
               />
             )} 
