@@ -1,27 +1,9 @@
-import { label, Middleware } from "next-api-middleware";
 import { NextResponse } from "next/server";
+import { getExampleTable } from "../../../schema";
 
-
-const middleware = async (req, res, next) => {
-  console.log('middleware started')
-  await next();
-  console.log('middleware ended')
-}
-
-const withMiddleware = label({middleware}, ['middleware'])
-
-// export const GET = withMiddleware(async (req, res, next) => {
-//   console.log('GET request')
-//   res.json({
-//     message: 'Hello World!'
-//   })
-// })
-
-// export default function handler(req, res, next) {
-//   res.json({message: 'Hello World!'});
-// }
 
 export async function GET(req, res, next) {
+  await getExampleTable();
   return new NextResponse("hello world!");
 }
 

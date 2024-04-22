@@ -4,11 +4,12 @@ import Button from '@mui/material/Button';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import DownloadIcon from '@mui/icons-material/Download';
+import EmptyIcon from '@mui/icons-material/HourglassEmpty';
 import CloudIcon from '@mui/icons-material/Cloud';
 import BootstrapDialog, { BootstrapDialogTitle } from '../BootstrapDialog';
 import {ListItemButton, Skeleton, List} from "@mui/material";
 
-import {now} from "@/app/components/Notepad/utils";
+import {now} from "../Notepad/utils";
 
 
 export default function CloudNote({ open: isOpen, onChange, onClose, endpoint={} }) {
@@ -61,9 +62,14 @@ export default function CloudNote({ open: isOpen, onChange, onClose, endpoint={}
               <Skeleton />
             </>
           ) : (
-            <List>
+            <List style={{width: '500px'}}>
+              {notes.length === 0 ? (
+                <div style={{textAlign: 'center'}}>
+                  <EmptyIcon style={{position: 'relative', top: 5, color: '#999'}} /> 无数据
+                </div>
+              ) : null}
               {notes.map(note => (
-                <ListItemButton style={{width: '500px'}} key={note.id}>
+                <ListItemButton key={note.id}>
                   <div style={{display: 'flex', width: '100%'}}>
                     <div style={{flex: 1}}>{note.name}</div>
                     <div>

@@ -4,19 +4,23 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import ShareIcon from '@mui/icons-material/Share';
 import Button from "@mui/material/Button";
-import { zhCN } from "@mui/x-date-pickers/locales";
-import { Checkbox, FormControlLabel, TextField } from "@mui/material";
-import { DateTimePicker } from '@mui/x-date-pickers/DateTimePicker';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Select, TextField, Typography, Snackbar, Alert } from "@mui/material";
 import 'dayjs/locale/zh-cn';
+import dayjs from "dayjs";
+import Slide from '@mui/material/Slide';
+import { getShareLink } from "../List";
+import Link from "next/link";
 
 
 
-export default function Share({ open: isOpen, onChange, onClose }) {
+
+export default function Share({ open: isOpen, onChange, onClose, noteID }) {
   const [open, setOpen] = React.useState(false);
-  const [accessPassword, setAccessPassword] = React.useState('');
-  const [neverExpired, setNeverExpired] = React.useState(false);
+  const [value, setValue] = React.useState({public: false, password: '', expiredAt: dayjs().add(7, 'day').unix()});
+  const [loading, setLoading] = React.useState(false);
+  const [showError, setShowError] = React.useState(false);
+  const [error, setError] = React.useState('');
+  const [shareLink, setShareLink] = React.useState('');
 
   React.useEffect(() => {
     setOpen(isOpen);
@@ -29,8 +33,57 @@ export default function Share({ open: isOpen, onChange, onClose }) {
     } 
   }, [onClose]);
 
+  const handlePublicChange = React.useCallback((publicAccess) => {
+    setValue({...value, password: publicAccess ? '' : value.password, public: publicAccess})
+  }, [value]);
+
+  const handleExpiredChange = React.useCallback((e) => {
+    if (e.target.value === 'never') {
+      setValue({...value, expiredAt: null});
+    } else {
+      const [val, unit] = e.target.value.split('-');
+      setValue({...value, expiredAt: dayjs().add(val, unit).unix()})
+    }
+  }, [value]);
+
+  const handleCreateShare = React.useCallback(() => {
+    if (!value.password && !value.public) {
+      setError('请设置访问密码')
+      setShowError(true);
+      return;
+    }
+
+    if (!noteID) {
+      setError('没有选择要分享的笔记')
+      setShowError(true);
+      return;
+    }
+
+    setError('');
+    setLoading(true);
+    fetch(`/api/share`, {
+      method: 'POST', 
+      headers: {'content-type': 'application/json'},
+      body: JSON.stringify({...value, noteID})
+    }).then(r => r.json()).then(r => {
+      setLoading(false);
+      console.log(r[0]);
+      setShareLink(getShareLink(r[0]));
+    })
+
+  }, [value, noteID, handleClose]);
+
   return (
     <div>
+      <Snackbar
+        anchorOrigin={{ vertical: 'top', horizontal: 'center' }}
+        open={showError}
+        TransitionComponent={Slide}
+        onClose={() => setShowError(false)}
+        autoHideDuration={3000}
+      >
+        <Alert severity="warning" variant="filled" sx={{width: '100%'}}>{error}</Alert>
+      </Snackbar>
       <BootstrapDialog 
         open={open} 
         onClose={handleClose}
@@ -40,43 +93,47 @@ export default function Share({ open: isOpen, onChange, onClose }) {
           <ShareIcon /> 分享笔记
         </BootstrapDialogTitle>
         <DialogContent dividers>
+          <Typography variant="p">参数设置</Typography>
+          {shareLink ? (
+            <div style={{marginTop: 10}}>
+              <Typography variant="p">分享链接已生成：</Typography>
+              <Typography><Link color="revert" href={shareLink} target='_blank'>{shareLink}</Link></Typography>
+            </div>
+          ) : null}
           <div style={{width: 500}}>
+            <FormControlLabel 
+              label='公开访问' 
+              checked={value.public} 
+              control={<Checkbox />} 
+              onChange={e => handlePublicChange(e.target.checked)}
+            />
             <TextField 
               fullWidth 
               margin="normal" 
               size="small" 
               required 
               label='访问密码' 
+              disabled={value.public}
               type="password" 
-              value={accessPassword}
-              onChange={e => setAccessPassword(e.target.value)}
+              value={value.password}
+              onChange={e => setValue({...value, password: e.target.value})}
             />
             <div style={{marginTop: 15, marginBottom: 10}}>
-              <LocalizationProvider 
-                dateAdapter={AdapterDayjs}
-                localeText={zhCN.components.MuiLocalizationProvider.defaultProps.localeText}
-                adapterLocale="zh-cn"
-              >
-                <DateTimePicker 
-                  disabled={neverExpired}
-                  sx={{'& .MuiInputBase-input': {padding: '8.5px 14px'}, '& .MuiFormLabel-root': {top: '-6px'}}} 
-                  label='过期时间' 
-                  views={['year', 'month', 'day', 'hours', 'minutes', 'seconds']} 
-                />
-              </LocalizationProvider>
-              <FormControlLabel 
-                style={{marginLeft: 5}} 
-                checked={neverExpired} 
-                onChange={e => setNeverExpired(e.target.checked)} 
-                label='永久有效' 
-                control={<Checkbox />} 
-              />
             </div>
+            <FormControl fullWidth size="small">
+              <InputLabel>有效期</InputLabel>
+              <Select label='有效期' onChange={handleExpiredChange} defaultValue={'7-day'}>
+                <MenuItem value='7-day'>7天</MenuItem>
+                <MenuItem value='15-day'>15天</MenuItem>
+                <MenuItem value='30-day'>30天</MenuItem>
+                <MenuItem value='never'>永久有效</MenuItem>
+              </Select>
+            </FormControl>
           </div>
         </DialogContent>
         <DialogActions>
-          <Button onClick={_ => setOpen(false)}>关闭</Button>
-          <Button style={{backgroundColor: '#92869f'}} variant="contained">保存</Button>
+          <Button onClick={handleClose}>关闭</Button>
+          <Button disabled={loading} onClick={handleCreateShare} style={{backgroundColor: '#92869f'}} variant="contained">创建分享</Button>
         </DialogActions>
       </BootstrapDialog>
     </div>

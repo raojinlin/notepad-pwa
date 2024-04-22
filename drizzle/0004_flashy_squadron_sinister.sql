@@ -1,0 +1,1 @@
+ALTER TABLE "nt_note_share" ALTER COLUMN "noteID" SET DATA TYPE text;

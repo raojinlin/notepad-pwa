@@ -20,10 +20,11 @@ import CloudIcon from '@mui/icons-material/Cloud';
 import StorageIcon from '@mui/icons-material/Storage';
 import WarningIcon from '@mui/icons-material/Warning';
 import ShareIcon from '@mui/icons-material/Share';
+import ShareList from '../Share/List';
 
 import styles from './notepad.module.css';
 import CloudNote from '../CloudNote';
-import { DataStorage, SettingStorage, CurrentNoteStorage, guid, now } from './utils';
+import { DataStorage, SettingStorage, CurrentNoteStorage, now, guid } from './utils';
 import Share from '../Share/Setting';
 
 
@@ -50,7 +51,6 @@ const defaultEndpoint = {
   query: '/api/notepad',
 }
 
-console.log(Share)
 
 export default function Notepad({ endpoint=defaultEndpoint }) {
   const [data, setData] = React.useState([]);
@@ -60,6 +60,8 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
   const [setting, setSetting] = React.useState({});
   const [cloudNoteOpen, setCloudNoteOpen] = React.useState(false);
   const [shareOpen, setShareOpen] = React.useState(false);
+  const [shareNoteID, setShareNoteID] = React.useState();
+  const [showShareList, setShowShareList] = React.useState(false);
 
   React.useEffect(() => {
     setData(dataStorage.get() || []);
@@ -78,7 +80,7 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
     settingStorage.set(newSetting);
   }, [setting]);
 
-  const [current, setCurrent] = React.useState(currNoteStorage.get() || (data?.length ? data[0]?.id : ''));
+  const [current, setCurrent] = React.useState(currNoteStorage.get() || (data?.length ? data[0]?.noteID : ''));
 
   React.useEffect(() => {
     currNoteStorage.set(current);
@@ -91,7 +93,7 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
       headers: {
         'content-type': 'application/json',
       },
-      body: JSON.stringify(val || data.find(it => it.id === current))
+      body: JSON.stringify(val || data.find(it => it.noteID === current))
     }).then(r => {
       setSyncing(false);
       setUploaded(true);
@@ -106,7 +108,7 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
 
   const handleNameChange = React.useCallback((i, value) => {
     const newData = [...data];
-    const index = newData.findIndex(it => it.id === i);
+    const index = newData.findIndex(it => it.noteID === i);
     newData[index] = {
       ...newData[index],
       name: value,
@@ -120,7 +122,7 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
 
   const handleNoteChange = React.useCallback((e) => {
     const newData = [...data];
-    const index = newData.findIndex(it => it.id === current);
+    const index = newData.findIndex(it => it.noteID === current);
     newData[index] = {
       ...newData[index],
       lastUpdateAt: Date.now(),
@@ -134,15 +136,15 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
   }, [data, current, setting, handleDataChange, handleUpload]);
 
   const handleNew = React.useCallback(() => {
-    const newData = [{id: guid(), note: '', name: now(), createAt: Date.now(), lastUpdateAt: Date.now()}, ...data]
+    const newData = [{noteID: guid(), note: '', name: now(), createAt: Date.now(), lastUpdateAt: Date.now()}, ...data]
     setCurrent(newData[0].id);
     handleDataChange(newData);
     handleUpload(newData[0]);
   }, [data, handleUpload, handleDataChange]);
 
   const handleDelete = React.useCallback(() => {
-    const currIndex = data.findIndex(it => it.id === current);
-    const newData = data.filter(it => it.id !== current);
+    const currIndex = data.findIndex(it => it.noteID === current);
+    const newData = data.filter(it => it.noteID !== current);
     handleDataChange(newData);
 
     if (currIndex-1 >= 0) {
@@ -152,7 +154,7 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
     }
 
     if (setting.autoSync) {
-      fetch(endpoint.delete + '?id=' + current, {
+      fetch(endpoint.delete + '?noteID=' + current, {
         method: 'DELETE'
       }).then(r => {
         console.log(r);
@@ -163,7 +165,7 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
   }, [data, current, setting, endpoint, handleDataChange]);
 
   const handleDownloadCurrent = React.useCallback((current) => {
-    const note = data.find(it => it.id === current);
+    const note = data.find(it => it.noteID === current);
     const blob = new Blob(note.note.split(''), {type: 'text/plain'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -178,7 +180,7 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
 
   const handleNoteExport = React.useCallback(note => {
     const newData = [...data];
-    const i = newData.findIndex(it => it.id === note.id);
+    const i = newData.findIndex(it => it.noteID === note.id);
     if (i === -1) {
       // 追加
       newData.push(note);
@@ -193,9 +195,10 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
 
   const handleNoteShare = React.useCallback(noteId => {
     setShareOpen(true);
+    setShareNoteID(noteId);
   }, []);
 
-  const getCurrent = () => data.find(it => it.id === current);
+  const getCurrent = () => data.find(it => it.noteID === current);
 
   const editorRef = React.useRef();
   const handleToEditor = React.useCallback((e) => {
@@ -235,7 +238,7 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
     }
 
     e.preventDefault();
-    const currIndex = data.findIndex(it => it.id === current);
+    const currIndex = data.findIndex(it => it.noteID === current);
     let nextIndex;
     if (moveDown) {
       nextIndex = Math.min(currIndex + 1, data.length);
@@ -269,6 +272,9 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
             <Button type='button' variant='text' onClick={handleNew}><AddIcon /> 新建笔记</Button>
             <Button type='button' variant='text' onClick={_ => setCloudNoteOpen(true)}>
               <CloudIcon style={{marginRight: '5px'}} /> 云笔记
+            </Button>
+            <Button type='button' variant='text' onClick={_ => setShowShareList(true)}>
+              <ShareIcon style={{marginRight: '5px'}} /> 分享列表
             </Button>
             <Button
               className={styles.mobileView}
@@ -315,24 +321,26 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
             return (
               <li
                 tabIndex={i}
-                key={item.id}
-                id={item.id}
-                onFocus={_ => setCurrent(item.id)}
-                className={current === item.id && styles.current || ''}
+                key={item.noteID}
+                id={item.noteID}
+                onFocus={_ => setCurrent(item.noteID)}
+                className={current === item.noteID && styles.current || ''}
               >
-                {current === item.id ?
-                  <input
-                    type='text'
-                    onChange={e => handleNameChange(item.id, e.target.value)}
-                    onFocus={(e) => {
-                      setCurrent(item.id);
-                    }}
-                    value={item.name}
-                  /> :
-                  <span className={styles.noteName}>{item.name}</span>
-                }
+                <div>
+                  {current === item.noteID ?
+                    <input
+                      type='text'
+                      onChange={e => handleNameChange(item.noteID, e.target.value)}
+                      onFocus={(e) => {
+                        setCurrent(item.noteID);
+                      }}
+                      value={item.name}
+                    /> :
+                    <span className={styles.noteName}>{item.name}</span>
+                  }
+                </div>
                 <div className={styles.itemToolbar}>
-                  <a href='javascript:;' onClick={_ => handleNoteShare(item.id)}>
+                  <a href='javascript:;' onClick={_ => handleNoteShare(item.noteID)}>
                     <Tooltip title='分享'>
                       <ShareIcon />
                     </Tooltip>
@@ -342,7 +350,7 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
                       <DeleteForeverIcon />
                     </Tooltip>
                   </a>
-                  <a href='javascript:;' onClick={_ => handleDownloadCurrent(item.id)}>
+                  <a href='javascript:;' onClick={_ => handleDownloadCurrent(item.noteID)}>
                      <Tooltip title={'下载笔记'}>
                        <DownloadIcon />
                      </Tooltip>
@@ -376,7 +384,7 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
                 ref={editorRef}
                 onFocus={_ => setCurrent(current)}
                 disabled={data.length === 0 || current < 0}
-                value={data ? data.find(it => it.id === current)?.note : '' || ''}
+                value={data ? data.find(it => it.noteID === current)?.note : '' || ''}
                 onChange={handleNoteChange}
               />
             )} 
@@ -400,11 +408,11 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
               {data.map(it => {
                 return (
                   <ListItemButton
-                    selected={it.id === current}
+                    selected={it.noteID === current}
                     sx={{width: '500px'}}
-                    key={it.id}
+                    key={it.noteID}
                     onClick={_ => {
-                      setCurrent(it.id);
+                      setCurrent(it.noteID);
                       setDialogOpen(false);
                     }}
                   >
@@ -420,7 +428,17 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
         </DialogActions>
       </Dialog>
       <CloudNote endpoint={endpoint} open={cloudNoteOpen} onClose={setCloudNoteOpen} onChange={handleNoteExport} />
-      <Share open={shareOpen} onClose={_ => setShareOpen(false)} />
+      <Share 
+        open={shareOpen} 
+        onClose={_ => {
+          setShareOpen(false);
+          setShareNoteID(0);
+        }} 
+        noteID={shareNoteID} 
+      />
+      {showShareList ? (
+        <ShareList open onClose={() => setShowShareList(false)} />
+      ) : null}
     </div>
   );
 }

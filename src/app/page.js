@@ -1,4 +1,4 @@
-import Notepad from "@/app/components/Notepad";
+import Notepad from "./components/Notepad";
 
 
 export default function Home() {
