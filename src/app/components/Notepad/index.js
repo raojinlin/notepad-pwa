@@ -137,7 +137,7 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
 
   const handleNew = React.useCallback(() => {
     const newData = [{noteID: guid(), note: '', name: now(), createAt: Date.now(), lastUpdateAt: Date.now()}, ...data]
-    setCurrent(newData[0].id);
+    setCurrent(newData[0].noteID);
     handleDataChange(newData);
     handleUpload(newData[0]);
   }, [data, handleUpload, handleDataChange]);
@@ -148,9 +148,9 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
     handleDataChange(newData);
 
     if (currIndex-1 >= 0) {
-      setCurrent(newData[currIndex-1]?.id);
+      setCurrent(newData[currIndex-1]?.noteID);
     } else {
-      setCurrent(newData[currIndex+1]?.id);
+      setCurrent(newData[currIndex+1]?.noteID);
     }
 
     if (setting.autoSync) {
@@ -180,7 +180,7 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
 
   const handleNoteExport = React.useCallback(note => {
     const newData = [...data];
-    const i = newData.findIndex(it => it.noteID === note.id);
+    const i = newData.findIndex(it => it.noteID === note.noteID);
     if (i === -1) {
       // 追加
       newData.push(note);
@@ -189,7 +189,7 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
       newData[i] = note;
     }
     setData(newData);
-    setCurrent(note.id);
+    setCurrent(note.noteID);
     handleDataChange(newData);
   }, [data, handleDataChange]);
 
