@@ -1,14 +1,4 @@
-import { NextRequest } from "next/server";
-
-export const bodyParser = async (request: NextRequest) => {
-  const reader = request.body.getReader();
-  let body = await reader.read().then(({ done, value }) => {
-    return new TextDecoder().decode(value);
-  });
-
-  return JSON.parse(body);
-}
-
+import { redirect } from "next/navigation";
 
 export const randomID = (len: number): string => {
     let id = '';
@@ -18,4 +8,21 @@ export const randomID = (len: number): string => {
     }
 
     return id;
+}
+
+
+export const fetch = (url: string, init: RequestInit): Promise<Response> => {
+  return window.fetch(url, init).then(r => {
+    if (r.status === 200) {
+      return r;
+    }
+
+    if (r.status === 401) {
+      redirect('/login');
+    }
+
+    const err = new Error('Invalid response from server');
+    Object.assign(err, {response: r});
+    throw err;
+  });
 }

@@ -3,8 +3,9 @@ import { randomID } from "../../../utils";
 import { db, NotepadTable, NoteShareTable } from "../../../schema";
 import { NextRequest } from "next/server";
 import { NextPageContext } from "next";
-import { eq } from "drizzle-orm";
+import { and, eq } from "drizzle-orm";
 import dayjs from "dayjs";
+import { getUser } from "../../../lib/session";
 
 export const GET = async (req: NextRequest, context) => {
   const params = new URL(req.url).searchParams
@@ -29,24 +30,25 @@ export const GET = async (req: NextRequest, context) => {
     return new NextResponse('share expired', {status: 403});
   }
 
-  const notes = await db.select().from(NotepadTable).where(eq(NotepadTable.noteID, share.noteID))
+  const notes = await db.select().from(NotepadTable).where(and(eq(NotepadTable.noteID, share.noteID), eq(NotepadTable.userID, share.userID)));
   if (notes.length === 0) {
     return new NextResponse('not found', {status: 404});
   }
 
   await db.update(NoteShareTable).set({accessCount: share.accessCount+1}).where(eq(NoteShareTable.sid, share.sid))
-  return new NextResponse(JSON.stringify({...share, note: notes[0]}), {headers: {'Content-Type': 'application/json'}});
+  return NextResponse.json({...share, note: notes[0]});
 } 
 
 
 export const POST = async (req: NextRequest, context: NextPageContext) => {
   const body = await req.json(); 
+  const user = await getUser(req);
   const insertData = {
     expiredAt: body.expiredAt ? new Date(body.expiredAt*1000) : null,
     public: body.public,
     password: body.password,
     noteID: body.noteID,
-    userID: 0,
+    userID: user.userID as number,
     accessCount: 0,
     sid: body.sid
   };
@@ -67,7 +69,7 @@ export const POST = async (req: NextRequest, context: NextPageContext) => {
           updatedAt: new Date(),
         }
     }).returning()
-  return new NextResponse(JSON.stringify(r), {headers: {'Content-Type': 'application/json'}});
+  return NextResponse.json(r);
 }
 
 export const DELETE = async (req: NextRequest, context: NextPageContext) => {
@@ -75,7 +77,7 @@ export const DELETE = async (req: NextRequest, context: NextPageContext) => {
   if (!sid || !sid.trim()) {
     return new NextResponse('not found', {status: 404});
   }
-
-  const r = await db.delete(NoteShareTable).where(eq(NoteShareTable.sid, sid)).returning();
-  return new NextResponse(JSON.stringify(r), {headers: {'Content-Type': 'application/json'}});
+  const user = await getUser(req);
+  const r = await db.delete(NoteShareTable).where(and(eq(NoteShareTable.userID, user.userID), eq(NoteShareTable.sid, sid))).returning();
+  return NextResponse.json(r)
 }

@@ -4,18 +4,20 @@ import Button from '@mui/material/Button';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import DownloadIcon from '@mui/icons-material/Download';
-import EmptyIcon from '@mui/icons-material/HourglassEmpty';
 import CloudIcon from '@mui/icons-material/Cloud';
 import BootstrapDialog, { BootstrapDialogTitle } from '../BootstrapDialog';
 import {ListItemButton, Skeleton, List} from "@mui/material";
-
+import NoData from '../NoData';
 import {now} from "../Notepad/utils";
+import { redirect  } from 'next/navigation';
+import { fetch } from '../../../utils';
 
 
 export default function CloudNote({ open: isOpen, onChange, onClose, endpoint={} }) {
   const [open, setOpen] = React.useState(isOpen);
   const [notes, setNotes] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
+  const [unauthorized, setUnauthorized] = React.useState(false);
 
   React.useEffect(() => {
     setOpen(isOpen);
@@ -24,7 +26,9 @@ export default function CloudNote({ open: isOpen, onChange, onClose, endpoint={}
     }
 
     setLoading(true);
-    fetch(endpoint.query).then(r => r.json()).then(r => {
+    fetch(endpoint.query).then(r => {
+      return r.json();
+    }).then(r => {
       setNotes(r);
       setLoading(false);
     });
@@ -63,10 +67,8 @@ export default function CloudNote({ open: isOpen, onChange, onClose, endpoint={}
             </>
           ) : (
             <List style={{width: '500px'}}>
-              {notes.length === 0 ? (
-                <div style={{textAlign: 'center'}}>
-                  <EmptyIcon style={{position: 'relative', top: 5, color: '#999'}} /> 无数据
-                </div>
+              {!notes || notes.length === 0 ? (
+                <NoData />
               ) : null}
               {notes.map(note => (
                 <ListItemButton key={note.id}>

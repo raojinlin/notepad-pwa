@@ -126,7 +126,7 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
     newData[index] = {
       ...newData[index],
       lastUpdateAt: Date.now(),
-      note: e.target.value
+      content: e.target.value
     };
 
     handleDataChange(newData.sort((a, b) => b.lastUpdateAt - a.lastUpdateAt));
@@ -166,7 +166,8 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
 
   const handleDownloadCurrent = React.useCallback((current) => {
     const note = data.find(it => it.noteID === current);
-    const blob = new Blob(note.content.split(''), {type: 'text/plain'});
+    if (!note) return;
+    const blob = new Blob(note?.content.split(''), {type: 'text/plain'});
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.style.visibility = 'hidden';
@@ -284,10 +285,10 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
             >
               <StorageIcon /> 本地笔记
             </Button>
-            <Button type='button' variant='text' onClick={_ => handleDownloadCurrent(current)}>
+            <Button type='button' variant='text' onClick={_ => handleDownloadCurrent(current)} disabled={!current}>
               <DownloadIcon style={{position: 'relative', top: '1px'}} />下载
             </Button>
-            <Button type='button' variant='text' onClick={_ => handleUpload()} disabled={syncing}>
+            <Button type='button' variant='text' onClick={_ => handleUpload()} disabled={syncing || !current}>
               <BackupIcon style={{marginRight: '5px'}} />上传
             </Button>
             <span className={styles.proc}>

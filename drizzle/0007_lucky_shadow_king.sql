@@ -1,0 +1,1 @@
+ALTER TABLE "users" ADD COLUMN "passowrd" varchar NOT NULL;

@@ -17,6 +17,7 @@ import {
   LinearProgress 
 } from '@mui/material';
 import dayjs from 'dayjs';
+import NoData from '../../NoData';
 
 const pageSize = 10;
 
@@ -73,6 +74,9 @@ const ShareList = ({ open, onClose }) => {
           </div>
           {!loading && data ?  (
             <>
+              {!data.items || !data.items.length ? (
+                <NoData />
+              ) : null}
               <List>
                 {data.items.map((item) => (
                   <div key={item.id}>

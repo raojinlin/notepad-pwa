@@ -1,18 +1,20 @@
 const process = require('process');
 
-import { eq } from 'drizzle-orm';
+import { and, eq } from 'drizzle-orm';
 import { db, NotepadTable } from '../../../schema';
-import { bodyParser } from '../../../utils';
+import { getUser } from '../../../lib/session';
 
 
 export async function GET(request, context) {
-  const r = await db.select().from(NotepadTable).where(eq(NotepadTable.userID, 0))
+  const user = await getUser(request);
+  const r = await db.select().from(NotepadTable).where(eq(NotepadTable.userID, user.userID))
   return new Response(JSON.stringify(r), {headers: {'content-type': 'application/json'}});
 }
 
 export async function POST(request, context) {
-  const body = await bodyParser(request);
-  const insertData = {name: body.name, userID: 0, content: body.note, noteID: body.noteID};
+  const user = await getUser(request);
+  const body = await request.json();
+  const insertData = {name: body.name, userID: user.userID, content: body.content, noteID: body.noteID};
   
   const r = await db.insert(NotepadTable)
     .values(insertData)
@@ -24,12 +26,13 @@ export async function POST(request, context) {
 }
 
 export async function DELETE(request) {
+  const user = await getUser(request);
   const id = new URL(request.url).searchParams.get('id');
   if (!id) {
     return new Response('Bad Request', {status: 400});
   }
 
 
-  const r = await db.delete(NotepadTable).where(eq(NotepadTable.id, id)).returning();
+  const r = await db.delete(NotepadTable).where(and(eq(NotepadTable.id, id), eq(NotepadTable.userID, user.userID))).returning();
   return new Response(JSON.stringify(r), {headers: {'content-type': 'application/json'}});
 }

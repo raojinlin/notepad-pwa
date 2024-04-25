@@ -1,0 +1,1 @@
+ALTER TABLE "nt_sessions" ADD COLUMN "userID" integer NOT NULL;

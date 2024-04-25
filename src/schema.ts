@@ -5,7 +5,9 @@ import {
   text,
   timestamp,
   uniqueIndex,
-  numeric,
+  json,
+  varchar,
+  integer,
 } from 'drizzle-orm/pg-core';
 import { drizzle } from 'drizzle-orm/vercel-postgres';
 
@@ -19,6 +21,7 @@ export const UserTable = pgTable(
   {
     id: serial('id').primaryKey(),
     name: text('name').notNull(),
+    password: varchar('passowrd').notNull(),
     email: text('email').notNull(),
     image: text('image').notNull(),
     createdAt: timestamp('createdAt').defaultNow().notNull(),
@@ -29,6 +32,19 @@ export const UserTable = pgTable(
     };
   },
 );
+
+export const UserSession = pgTable('nt_sessions', {
+  id: serial('id').primaryKey(),
+  userID: integer('userID').notNull(),
+  key: text('name').notNull(),
+  expiredAt: timestamp('expiredAt').notNull(),
+  data: json('data').notNull(),
+  createdAt: timestamp('createdAt').notNull(),
+}, (session) => {
+  return {
+    uniqueIndex: uniqueIndex('user_session_idx').on(session.userID)
+  }
+})
 
 export const NotepadTable = pgTable('nt_notepad', {
   id: serial('id').primaryKey(),
