@@ -5,7 +5,6 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import commonStyles from '../components/Notepad/notepad.module.css'
 import { Alert, CircularProgress } from '@mui/material';
-import { redirect } from 'next/navigation';
 
 function LoginForm() {
   const [email, setEmail] = useState('');
@@ -19,6 +18,8 @@ function LoginForm() {
       setError('请填写用户名和密码');
       return;
     }
+
+    setError('');
     try {
       setLoading(true);
       const response = await fetch('/api/login', {
@@ -30,7 +31,7 @@ function LoginForm() {
       });
       const data = await response.json();
       setLoading(false);
-      redirect('/');
+      window.location.href = '/';
     } catch (error) {
       console.error('登录失败：', error);
     }

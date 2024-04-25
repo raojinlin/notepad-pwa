@@ -1,5 +1,3 @@
-import { redirect } from "next/navigation";
-
 export const randomID = (len: number): string => {
     let id = '';
     let letters = `abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ012345789`;
@@ -18,7 +16,7 @@ export const fetch = (url: string, init: RequestInit): Promise<Response> => {
     }
 
     if (r.status === 401) {
-      redirect('/login');
+      window.location.href = '/login';
     }
 
     const err = new Error('Invalid response from server');
