@@ -6,16 +6,17 @@ import Grid from '@mui/material/Grid';
 import commonStyles from '../components/Notepad/notepad.module.css'
 import { Alert, CircularProgress, Typography } from '@mui/material';
 
-function LoginForm() {
+function RegisterForm() {
   const [email, setEmail] = useState('');
+  const [name, setName] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    if (!email || !password) {
-      setError('请填写用户名和密码');
+    if (!email || !password || !name) {
+      setError('请填写完整注册信息');
       return;
     }
 
@@ -23,12 +24,12 @@ function LoginForm() {
       setError('');
       try {
         setLoading(true);
-          const response = await fetch('/api/login', {
+          const response = await fetch('/api/register', {
             method: 'POST',
             headers: {
               'Content-Type': 'application/json',
             },
-            body: JSON.stringify({ email, password }),
+            body: JSON.stringify({ email, password, name }),
           });
           
           if (response.status === 404) {
@@ -36,10 +37,23 @@ function LoginForm() {
             setLoading(false);
             return;
           }
+
+          if (response.status === 401) {
+            setError('系统不可注册');
+            setLoading(false);
+            return;
+          }
+
           const data = await response.json();
+          if (data.message) {
+            if (data.message.includes('already exists')) {
+              setError('邮箱已被注册');
+              setLoading(false);
+              return;
+            }
+          }
           setLoading(false);
-          window.location.href = '/';
-        
+          window.location.href = '/login';
       } catch (error) {
         console.error('登录失败：', error);
       }
@@ -62,9 +76,18 @@ function LoginForm() {
         style={{ minHeight: 'calc(100vh - 100px)'}}
       > 
         <Grid item xs={12}>
-          <Typography variant='h5'>登录</Typography>
+          <Typography variant='h5'>注册账号</Typography>
           {error ? <div><Alert severity="error">{error}</Alert></div> : null}
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit}> 
+            <TextField
+              label="名称"
+              variant="outlined"
+              value={name}
+              size='small'
+              onChange={(e) => setName(e.target.value)}
+              fullWidth
+              margin="normal"
+            />
             <TextField
               label="邮箱"
               variant="outlined"
@@ -86,7 +109,7 @@ function LoginForm() {
             />
             <div style={{textAlign: 'right'}}>
               <Button disabled={loading} type="submit" variant="contained" color="primary">
-                登录
+                注册
                 {loading ? <CircularProgress style={{width: 14, height: 14, marginLeft: 10}} /> : null}
               </Button>
             </div>
@@ -97,4 +120,4 @@ function LoginForm() {
   );
 }
 
-export default LoginForm;
+export default RegisterForm;
