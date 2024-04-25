@@ -2,14 +2,13 @@ import { NextRequest, NextResponse, NextFetchEvent } from 'next/server';
 import { createEdgeRouter } from "next-connect";
 import { decrypt } from './lib/session';
 import dayjs from 'dayjs';
-import { NextURL } from 'next/dist/server/web/next-url';
 
 const router = createEdgeRouter<NextRequest, NextFetchEvent>();
 
-const noAuthUrl = ['/api/login', '/api/register', {url: '/api/share', method: 'GET'}];
+const noAuthCheckUrls = ['/api/login', '/api/share/note', '/api/register'];
 
 const isAuthenticated = async (req: NextRequest) => {
-  if (req.url.includes('/api/login') || req.url.includes('/api/register')) {
+  if (noAuthCheckUrls.some(url => req.url.includes(url))) {
     if (req.url.includes('/api/register')) {
       return process.env.ALLOW_USER_REGISTER === 'true';
     }
@@ -60,37 +59,3 @@ export async function middleware(request: NextRequest, event: NextFetchEvent) {
 export const config = {
   matcher: ['/((?:api.+$).*)'],
 }
-
-// async function auth_middleware(req: NextRequest, context: NextPageContext) {
-//   if (['/api/login', '/api/register'].some(url => req.url.includes(url))) {
-//     return NextResponse.next();
-//   }
-
-//   const authID = req.cookies.get('auth_id')
-//   if (!authID || !authID.value) {
-//     const url = req.nextUrl.clone();
-//     url.pathname = '/login';
-//     return NextResponse.redirect(url);
-//   }
-
-//   const user = new User();
-//   const loginUser = await user.getLoginUser(authID.value)
-
-//   const headers = new Headers(req.headers);
-//   headers.set('x-session-user', loginUser)
-//   console.log('auth_middleware', loginUser);
-//   return NextResponse.next({request: {headers: headers}});
-// }
-
-
-// export async function middleware(request: NextRequest, context: NextPageContext) {
-//   if (request.url.includes('/api')) {
-//     console.log("api request: ", new Date(), request.url)
-//     await db.select().from(UserTable);
-//     // return auth_middleware(request, context)
-//   }
-// }
-   
-// export const config = {
-//   matcher: '/(api/.*)',
-// }

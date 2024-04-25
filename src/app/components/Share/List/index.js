@@ -23,7 +23,7 @@ import { fetch  } from '../../../../utils';
 const pageSize = 10;
 
 export const getShareLink = (item) => {
-  return `${window.location.origin}/share/${item.sid}?password=${item.password}`;
+  return `${window.location.origin}/s/${item.sid}?password=${item.password}`;
 }
 
 const ShareList = ({ open, onClose }) => {

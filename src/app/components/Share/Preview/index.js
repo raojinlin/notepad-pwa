@@ -64,7 +64,7 @@ export default function Preview({ sid, password }) {
 
   React.useEffect(() => {
     setLoading(true);
-    const r = fetch(`/api/share?sid=${sid}&password=${accessPassword}`).then(s => {
+    const r = fetch(`/api/share/note?sid=${sid}&password=${accessPassword}`).then(s => {
       if (s.status === 200) {
         s.json().then(r => setShare(r));
       } else if (s.status === 404) {
