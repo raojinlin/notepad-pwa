@@ -78,6 +78,6 @@ export const DELETE = async (req: NextRequest, context: NextPageContext) => {
     return new NextResponse('not found', {status: 404});
   }
   const user = await getUser(req);
-  const r = await db.delete(NoteShareTable).where(and(eq(NoteShareTable.userID, user.userID), eq(NoteShareTable.sid, sid))).returning();
+  const r = await db.delete(NoteShareTable).where(and(eq(NoteShareTable.userID, user.userID as number), eq(NoteShareTable.sid, sid))).returning();
   return NextResponse.json(r)
 }
