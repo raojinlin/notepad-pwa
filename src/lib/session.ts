@@ -13,6 +13,7 @@ export async function encrypt(payload: any) {
 }
 
 export async function decrypt(authID: string | undefined = '') {
+  console.log(encodedKey, authID);
   try {
     const { payload } = await jwtVerify(authID, encodedKey, {
       algorithms: ['HS256'],
