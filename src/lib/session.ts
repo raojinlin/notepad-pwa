@@ -19,7 +19,7 @@ export async function decrypt(authID: string | undefined = '') {
     })
     return payload
   } catch (error) {
-    console.log('Failed to verify session')
+    console.log('Failed to verify session: ', error.message)
   }
 }
 
