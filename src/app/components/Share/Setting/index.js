@@ -4,19 +4,20 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import ShareIcon from '@mui/icons-material/Share';
 import Button from "@mui/material/Button";
-import { Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Select, TextField, Typography, Snackbar, Alert } from "@mui/material";
+import { Checkbox, FormControl, FormControlLabel, InputLabel, MenuItem, Select, TextField, Typography, Snackbar, Alert, FormLabel } from "@mui/material";
 import 'dayjs/locale/zh-cn';
 import dayjs from "dayjs";
 import Slide from '@mui/material/Slide';
 import { getShareLink } from "../List";
 import Link from "next/link";
+import { randomID } from "../../../../utils";
 
 
 
 
 export default function Share({ open: isOpen, onChange, onClose, noteID }) {
   const [open, setOpen] = React.useState(false);
-  const [value, setValue] = React.useState({public: false, password: '', expiredAt: dayjs().add(7, 'day').unix()});
+  const [value, setValue] = React.useState({randomPassword: false, public: false, password: '', expiredAt: dayjs().add(7, 'day').unix()});
   const [loading, setLoading] = React.useState(false);
   const [showError, setShowError] = React.useState(false);
   const [error, setError] = React.useState('');
@@ -34,7 +35,15 @@ export default function Share({ open: isOpen, onChange, onClose, noteID }) {
   }, [onClose]);
 
   const handlePublicChange = React.useCallback((publicAccess) => {
-    setValue({...value, password: publicAccess ? '' : value.password, public: publicAccess})
+    setValue({...value, password: publicAccess ? '' : value.password, public: publicAccess, randomPassword: false})
+  }, [value]);
+
+  const handleRandomPassowrd = React.useCallback((random) => {
+    if (!random) {
+      setValue({...value, password: '', randomPassword: false});
+    } else {
+      setValue({...value, password: randomID(5), randomPassword: true, public: false});
+    }
   }, [value]);
 
   const handleExpiredChange = React.useCallback((e) => {
@@ -107,14 +116,20 @@ export default function Share({ open: isOpen, onChange, onClose, noteID }) {
               control={<Checkbox />} 
               onChange={e => handlePublicChange(e.target.checked)}
             />
+            <FormControlLabel 
+              label='生成随机访问密码' 
+              control={<Checkbox />} 
+              checked={value.randomPassword} 
+              onChange={e => handleRandomPassowrd(e.target.checked)} 
+            />
             <TextField 
               fullWidth 
               margin="normal" 
               size="small" 
               required 
               label='访问密码' 
-              disabled={value.public}
-              type="password" 
+              disabled={value.public || value.randomPassword}
+              type="text" 
               value={value.password}
               onChange={e => setValue({...value, password: e.target.value})}
             />
