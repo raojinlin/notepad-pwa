@@ -1,15 +1,16 @@
 import * as React from 'react';
+import styles from './index.module.css';
 
 import Button from '@mui/material/Button';
 import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import DownloadIcon from '@mui/icons-material/Download';
+import DeleteIcon from '@mui/icons-material/Delete';
 import CloudIcon from '@mui/icons-material/Cloud';
 import BootstrapDialog, { BootstrapDialogTitle } from '../BootstrapDialog';
 import {ListItemButton, Skeleton, List} from "@mui/material";
 import NoData from '../NoData';
 import {now} from "../Notepad/utils";
-import { redirect  } from 'next/navigation';
 import { fetch } from '../../../utils';
 
 
@@ -17,14 +18,9 @@ export default function CloudNote({ open: isOpen, onChange, onClose, endpoint={}
   const [open, setOpen] = React.useState(isOpen);
   const [notes, setNotes] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
-  const [unauthorized, setUnauthorized] = React.useState(false);
+  const [deletingID, setDeletingID] = React.useState(0);
 
-  React.useEffect(() => {
-    setOpen(isOpen);
-    if (!isOpen) {
-      return;
-    }
-
+  const refreshNotes = React.useCallback(() => {
     setLoading(true);
     fetch(endpoint.query).then(r => {
       return r.json();
@@ -32,7 +28,24 @@ export default function CloudNote({ open: isOpen, onChange, onClose, endpoint={}
       setNotes(r);
       setLoading(false);
     });
-  }, [isOpen, endpoint]);
+  }, [endpoint]);
+
+  React.useEffect(() => {
+    setOpen(isOpen);
+    if (!isOpen) {
+      return;
+    }
+
+    refreshNotes();
+  }, [isOpen, refreshNotes]);
+
+  const handleDelete = React.useCallback((id) => {
+    setDeletingID(id);
+    fetch(`${endpoint.delete}?id=${id}`, {method: 'DELETE'}).then(r => {
+      setDeletingID(0);
+      return refreshNotes();
+    })
+  }, [endpoint, refreshNotes]);
 
   const handleClose = React.useCallback(() => {
     setOpen(false);
@@ -72,13 +85,18 @@ export default function CloudNote({ open: isOpen, onChange, onClose, endpoint={}
               ) : null}
               {notes.map(note => (
                 <ListItemButton key={note.id}>
-                  <div style={{display: 'flex', width: '100%'}}>
+                  <div className={styles.noteRow}>
                     <div style={{flex: 1}}>{note.name}</div>
                     <div>
-                      <span style={{verticalAlign: 'top', fontSize: '14px', marginRight: '15px'}}>
+                      <span className={styles.createTime}>
                         {now(note.lastUpdateAt)}
                       </span>
-                      <DownloadIcon onClick={_ => handleChange(note)} style={{color: '#655965'}} />
+                      <Button className={styles.action} onClick={_ => handleChange(note)}>
+                        <DownloadIcon />
+                      </Button>
+                      <Button className={styles.action} onClick={_ => handleDelete(note.id)} disabled={note.id === deletingID}>
+                        <DeleteIcon />
+                      </Button>
                     </div>
                   </div>
                 </ListItemButton>
