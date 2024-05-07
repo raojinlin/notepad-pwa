@@ -18,6 +18,7 @@ import CheckIcon from '@mui/icons-material/Check';
 import BackupIcon from '@mui/icons-material/Backup';
 import CloudIcon from '@mui/icons-material/Cloud';
 import StorageIcon from '@mui/icons-material/Storage';
+import LogoutIcon from '@mui/icons-material/Logout';
 import WarningIcon from '@mui/icons-material/Warning';
 import ShareIcon from '@mui/icons-material/Share';
 import ShareList from '../Share/List';
@@ -26,6 +27,7 @@ import styles from './notepad.module.css';
 import CloudNote from '../CloudNote';
 import { DataStorage, SettingStorage, CurrentNoteStorage, now, guid } from './utils';
 import Share from '../Share/Setting';
+import Link from 'next/link';
 
 
 const dataStorage = new DataStorage();
@@ -291,16 +293,6 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
             <Button type='button' variant='text' onClick={_ => handleUpload()} disabled={syncing || !current}>
               <BackupIcon style={{marginRight: '5px'}} />上传
             </Button>
-            <span className={styles.proc}>
-              {getCurrent()?.createAt ? (<span className={styles.lastUpdate}>修改日期: {now(getCurrent().lastUpdateAt)}</span>) : null}
-              {syncing ?
-                <CircularProgress className={styles.loading} color="success" /> :
-                uploaded ? <CheckIcon className={styles.loading} /> : null
-              }
-            </span>
-
-          </Box>
-          <div className={styles.options}>
             <FormControlLabel
               label={'自动上传'}
               control={
@@ -313,6 +305,19 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
                 />
               }
             />
+            <span className={styles.proc}>
+              {getCurrent()?.createAt ? (<span className={styles.lastUpdate}>修改日期: {now(getCurrent().lastUpdateAt)}</span>) : null}
+              {syncing ?
+                <CircularProgress className={styles.loading} color="success" /> :
+                uploaded ? <CheckIcon className={styles.loading} /> : null
+              }
+            </span>
+
+          </Box>
+          <div className={styles.options}>
+            <div style={{lineHeight: '42px'}}>
+              <div><Link href={'/logout'}><LogoutIcon style={{position: 'relative', top: '7px', marginRight: '5px'}} />注销</Link></div>
+            </div>
           </div>
         </div>
       </div>
@@ -362,14 +367,14 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
           })}
         </ul>
         <div className={styles.textarea}>
-          <Box 
+          <Box
             sx={{
               '& .MuiSvgIcon-root': {
-                color: 'yellowgreen', 
-                position: 'relative', 
-                top: 5, 
+                color: 'yellowgreen',
+                position: 'relative',
+                top: 5,
                 marginRight: '5px'
-              }, 
+              },
               '&': {
                 height: '100%'
               }
@@ -388,7 +393,7 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
                 value={data ? data.find(it => it.noteID === current)?.content : '' || ''}
                 onChange={handleNoteChange}
               />
-            )} 
+            )}
           </Box>
         </div>
       </div>
@@ -410,7 +415,7 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
                 return (
                   <ListItemButton
                     selected={it.noteID === current}
-                    sx={{width: '500px'}}
+                    sx={{minWidth: '300px', maxWidth: '500px'}}
                     key={it.noteID}
                     onClick={_ => {
                       setCurrent(it.noteID);
@@ -429,13 +434,13 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
         </DialogActions>
       </Dialog>
       <CloudNote endpoint={endpoint} open={cloudNoteOpen} onClose={setCloudNoteOpen} onChange={handleNoteExport} />
-      <Share 
-        open={shareOpen} 
+      <Share
+        open={shareOpen}
         onClose={_ => {
           setShareOpen(false);
           setShareNoteID(0);
-        }} 
-        noteID={shareNoteID} 
+        }}
+        noteID={shareNoteID}
       />
       {showShareList ? (
         <ShareList open onClose={() => setShowShareList(false)} />

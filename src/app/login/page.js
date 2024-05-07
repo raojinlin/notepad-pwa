@@ -5,6 +5,7 @@ import Button from '@mui/material/Button';
 import Grid from '@mui/material/Grid';
 import commonStyles from '../components/Notepad/notepad.module.css'
 import { Alert, CircularProgress, Typography } from '@mui/material';
+import Link from 'next/link';
 
 function LoginForm() {
   const [email, setEmail] = useState('');
@@ -30,7 +31,7 @@ function LoginForm() {
             },
             body: JSON.stringify({ email, password }),
           });
-          
+
           if (response.status === 404) {
             setError('邮箱或密码错误');
             setLoading(false);
@@ -39,7 +40,7 @@ function LoginForm() {
           const data = await response.json();
           setLoading(false);
           window.location.href = '/';
-        
+
       } catch (error) {
         console.error('登录失败：', error);
       }
@@ -60,7 +61,7 @@ function LoginForm() {
         alignItems="center"
         justifyContent="center"
         style={{ minHeight: 'calc(100vh - 100px)'}}
-      > 
+      >
         <Grid item xs={12}>
           <Typography variant='h5'>登录</Typography>
           {error ? <div><Alert severity="error">{error}</Alert></div> : null}
@@ -85,6 +86,7 @@ function LoginForm() {
               margin="normal"
             />
             <div style={{textAlign: 'right'}}>
+              <div style={{marginBottom: 20}}><Link href='/register'>注册新账号</Link></div>
               <Button disabled={loading} type="submit" variant="contained" color="primary">
                 登录
                 {loading ? <CircularProgress style={{width: 14, height: 14, marginLeft: 10}} /> : null}

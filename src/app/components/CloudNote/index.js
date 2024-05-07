@@ -79,7 +79,7 @@ export default function CloudNote({ open: isOpen, onChange, onClose, endpoint={}
               <Skeleton />
             </>
           ) : (
-            <List style={{width: '500px'}}>
+            <List style={{maxWidth: '500px', minWidth: '400px'}}>
               {!notes || notes.length === 0 ? (
                 <NoData />
               ) : null}
