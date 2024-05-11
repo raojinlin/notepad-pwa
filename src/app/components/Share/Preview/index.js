@@ -4,7 +4,7 @@ import React from "react";
 import commonStyles from '../../Notepad/notepad.module.css';
 import styles from "./index.module.css";
 import WarningIcon from '@mui/icons-material/Warning';
-import { Skeleton, TextField } from "@mui/material";
+import { Skeleton, TextField, Typography } from "@mui/material";
 import { Button } from "@mui/material";
 import dayjs from "dayjs";
 
@@ -24,7 +24,7 @@ const Notfound = () => {
   );
 };
 
-const AccessPassword = ({ onChange }) => {
+const AccessPassword = ({ onChange, message }) => {
   const [val, setVal] = React.useState('');
 
   const handleSubmit = React.useCallback(() => {
@@ -35,21 +35,22 @@ const AccessPassword = ({ onChange }) => {
 
   return (
     <div className={styles.accessPassword}>
-      <div>
-        <TextField 
+      {message}
+      <form onSubmitCapture={handleSubmit}>
+        <TextField
           value={val}
           fullWidth
-          placeholder="请输入访问密码" 
-          size="small" 
-          label='访问密码' 
-          type='password' 
-          required 
-          onChange={(e) => setVal(e.target.value.trim())} 
+          placeholder="请输入访问密码"
+          size="small"
+          label='访问密码'
+          type='password'
+          required
+          onChange={(e) => setVal(e.target.value.trim())}
         />
-      </div>
-      <div className={styles.btnRow}>
-        <Button variant="contained" onClick={handleSubmit} size="small">访问</Button>
-      </div>
+        <div className={styles.btnRow}>
+          <Button variant="contained" onClick={handleSubmit} size="small">访问</Button>
+        </div>
+      </form>
     </div>
   );
 };
@@ -60,7 +61,7 @@ export default function Preview({ sid, password }) {
   const [accessDenied, setAccessDenied] = React.useState(false);
   const [accessPassword, setAccessPassword] = React.useState(password || '');
   const [loading, setLoading] = React.useState(false);
-  
+
 
   React.useEffect(() => {
     setLoading(true);
@@ -103,7 +104,7 @@ export default function Preview({ sid, password }) {
           </>
         ) : null}
         {notFound ? <Notfound /> : null}
-        {accessDenied ? <AccessPassword onChange={handlePasswordChange} /> : null}
+        {accessDenied ? <AccessPassword message={accessPassword ? <Typography style={{marginBottom: '15px', color: 'red'}}>访问密码错误，请重新填写！</Typography> : ''} onChange={handlePasswordChange} /> : null}
 
         {!loading && share?.id ? (
           <div className={styles.noteContent}>

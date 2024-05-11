@@ -12,6 +12,7 @@ import {ListItemButton, Skeleton, List} from "@mui/material";
 import NoData from '../NoData';
 import {now} from "../Notepad/utils";
 import { fetch } from '../../../utils';
+import DeleteConfirmDialog from '../Notepad/DeleteConfirmDialog';
 
 
 export default function CloudNote({ open: isOpen, onChange, onClose, endpoint={} }) {
@@ -19,6 +20,7 @@ export default function CloudNote({ open: isOpen, onChange, onClose, endpoint={}
   const [notes, setNotes] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [deletingID, setDeletingID] = React.useState(0);
+  const [deleting, setDeleting] = React.useState(false);
 
   const refreshNotes = React.useCallback(() => {
     setLoading(true);
@@ -41,8 +43,13 @@ export default function CloudNote({ open: isOpen, onChange, onClose, endpoint={}
 
   const handleDelete = React.useCallback((id) => {
     setDeletingID(id);
-    fetch(`${endpoint.delete}?id=${id}`, {method: 'DELETE'}).then(r => {
-      setDeletingID(0);
+  }, []);
+
+  const handleDeleteConfirm = React.useCallback((id) => {
+    setDeleting(true);
+    return fetch(`${endpoint.delete}?noteID=${id}`, {method: 'DELETE'}).then(r => {
+      setDeletingID('');
+      setDeleting(false);
       return refreshNotes();
     })
   }, [endpoint, refreshNotes]);
@@ -61,6 +68,13 @@ export default function CloudNote({ open: isOpen, onChange, onClose, endpoint={}
 
   return (
     <div>
+      <DeleteConfirmDialog
+        open={!!deletingID}
+        onClose={() => setDeletingID('')}
+        showDeleteCloud={false}
+        loading={deleting}
+        onConfirm={() => handleDeleteConfirm(deletingID)}
+      />
       <BootstrapDialog
         onClose={handleClose}
         aria-labelledby="customized-dialog-title"
@@ -94,7 +108,7 @@ export default function CloudNote({ open: isOpen, onChange, onClose, endpoint={}
                       <Button className={styles.action} onClick={_ => handleChange(note)}>
                         <DownloadIcon />
                       </Button>
-                      <Button className={styles.action} onClick={_ => handleDelete(note.id)} disabled={note.id === deletingID}>
+                      <Button className={styles.action} onClick={_ => handleDelete(note.noteID)} disabled={note.noteID === deletingID}>
                         <DeleteIcon />
                       </Button>
                     </div>

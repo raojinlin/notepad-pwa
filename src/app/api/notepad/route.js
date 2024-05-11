@@ -15,11 +15,11 @@ export async function POST(request, context) {
   const user = await getUser(request);
   const body = await request.json();
   const insertData = {name: body.name, userID: user.userID, content: body.content, noteID: body.noteID};
-  
+
   const r = await db.insert(NotepadTable)
     .values(insertData)
     .onConflictDoUpdate({
-      target: NotepadTable.noteID, 
+      target: NotepadTable.noteID,
       set: {'name': insertData.name, 'content': insertData.content, 'updatedAt': new Date()}
     }).returning();
   return new Response(JSON.stringify(r));
@@ -27,12 +27,12 @@ export async function POST(request, context) {
 
 export async function DELETE(request) {
   const user = await getUser(request);
-  const id = new URL(request.url).searchParams.get('id');
-  if (!id) {
+  const noteID = new URL(request.url).searchParams.get('noteID');
+  if (!noteID) {
     return new Response('Bad Request', {status: 400});
   }
 
 
-  const r = await db.delete(NotepadTable).where(and(eq(NotepadTable.id, id), eq(NotepadTable.userID, user.userID))).returning();
+  const r = await db.delete(NotepadTable).where(and(eq(NotepadTable.noteID, noteID), eq(NotepadTable.userID, user.userID))).returning();
   return new Response(JSON.stringify(r), {headers: {'content-type': 'application/json'}});
 }

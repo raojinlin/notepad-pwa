@@ -9,7 +9,7 @@ import {
   DialogActions,
   DialogContentText,
   FormControlLabel,
-  ListItemButton, List, CircularProgress, Box, Tooltip
+  ListItemButton, List, CircularProgress, Box, Tooltip, Popover
 } from "@mui/material";
 import AddIcon from '@mui/icons-material/Add';
 import DownloadIcon from '@mui/icons-material/Download';
@@ -22,6 +22,7 @@ import LogoutIcon from '@mui/icons-material/Logout';
 import WarningIcon from '@mui/icons-material/Warning';
 import ShareIcon from '@mui/icons-material/Share';
 import ShareList from '../Share/List';
+import DeleteConfirmDialog from './DeleteConfirmDialog';
 
 import styles from './notepad.module.css';
 import CloudNote from '../CloudNote';
@@ -64,6 +65,8 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
   const [shareOpen, setShareOpen] = React.useState(false);
   const [shareNoteID, setShareNoteID] = React.useState();
   const [showShareList, setShowShareList] = React.useState(false);
+  const [deleteItem, setDeleteItem] = React.useState(null);
+  const [deleting, setDeleting] = React.useState(false);
 
   React.useEffect(() => {
     setData(dataStorage.get() || []);
@@ -144,7 +147,11 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
     handleUpload(newData[0]);
   }, [data, handleUpload, handleDataChange]);
 
-  const handleDelete = React.useCallback(() => {
+  const handleDeleteConfirm = React.useCallback(current => {
+    setDeleteItem(current);
+  }, []);
+
+  const handleDelete = React.useCallback((current, deleteCloud) => {
     const currIndex = data.findIndex(it => it.noteID === current);
     const newData = data.filter(it => it.noteID !== current);
     handleDataChange(newData);
@@ -155,16 +162,22 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
       setCurrent(newData[currIndex+1]?.noteID);
     }
 
-    if (setting.autoSync) {
+    if (deleteCloud || setting.autoSync) {
+      setDeleting(true);
       fetch(endpoint.delete + '?noteID=' + current, {
         method: 'DELETE'
       }).then(r => {
         console.log(r);
       }).catch(err => {
         console.error(err);
+      }).finally(() => {
+        setDeleteItem(null);
+        setDeleting(false);
       });
+    } else {
+      setDeleteItem(null);
     }
-  }, [data, current, setting, endpoint, handleDataChange]);
+  }, [data, setting, endpoint, handleDataChange]);
 
   const handleDownloadCurrent = React.useCallback((current) => {
     const note = data.find(it => it.noteID === current);
@@ -351,7 +364,7 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
                       <ShareIcon />
                     </Tooltip>
                   </a>
-                  <a href='javascript:;' onClick={_ => handleDelete()}>
+                  <a href='javascript:;' onClick={_ => handleDeleteConfirm(item.noteID)}>
                     <Tooltip title='删除'>
                       <DeleteForeverIcon />
                     </Tooltip>
@@ -434,6 +447,12 @@ export default function Notepad({ endpoint=defaultEndpoint }) {
         </DialogActions>
       </Dialog>
       <CloudNote endpoint={endpoint} open={cloudNoteOpen} onClose={setCloudNoteOpen} onChange={handleNoteExport} />
+      <DeleteConfirmDialog
+        open={Boolean(deleteItem)}
+        onClose={() => setDeleteItem(null)}
+        onConfirm={(deleteCloud) => handleDelete(deleteItem, deleteCloud)}
+        loading={deleting}
+      />
       <Share
         open={shareOpen}
         onClose={_ => {
