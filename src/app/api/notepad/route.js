@@ -20,7 +20,7 @@ export async function POST(request, context) {
     .values(insertData)
     .onConflictDoUpdate({
       target: NotepadTable.noteID,
-      set: {'name': insertData.name, 'content': insertData.content, 'updatedAt': new Date()}
+      set: {'name': insertData.name, 'content': insertData.content, 'updatedAt': new Date(), 'userID': insertData.userID}
     }).returning();
   return new Response(JSON.stringify(r));
 }
