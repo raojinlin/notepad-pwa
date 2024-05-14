@@ -1,4 +1,4 @@
-Notepad 是一个基于 Web 的轻量级笔记应用程序，支持本地离线存储、云端同步以及自动同步等功能。它采用现代化的技术栈：Next.js、React、Material-UI、Vercel Serverless Functions 和 MongoDB。
+Notepad 是一个基于 Web 的轻量级笔记应用程序，支持本地离线存储、云端同步以及自动同步等功能。它采用现代化的技术栈：Next.js、React、Material-UI、Vercel Serverless Functions 和 PostgreSQL。
 
 
 ## 特性
@@ -13,7 +13,7 @@ Notepad 是一个基于 Web 的轻量级笔记应用程序，支持本地离线�
 采用了现代化的技术栈，具体包括：
 
 * 前端: Next.js、React、Material-UI。
-* 后端: Vercel Serverless Functions、MongoDB。
+* 后端: Vercel Serverless Functions、PostgreSQL。
 
 ## 安装
 
@@ -42,53 +42,18 @@ Web
 3. 在代码仓库的根目录下运行 npm install 命令安装所有依赖。
 4. 创建一个 .env 文件，并设置以下环境变量：
 ```.dotenv
-MONGODB_URI=mongodb+srv://[username]:[password]@[cluster-host]/?retryWrites=true&w=majority
-```
-请确保将 MONGODB_URI 替换为你的 MongoDB 数据库的实际 URI。
+ALLOW_USER_REGISTER=true # 是否允许用户注册
+SESSION_SECRET=xxxxxxxxxxxxxxxx # session secret
+POSTGRES_URL="postgres://<username>:<password>@<POSTGRES_URL>/<database>"
 
-5. 运行 npm run dev 命令启动开发服务器。
-6. 访问 [http://localhost:3000](http://localhost:3000) 查看应用程序。
-
-
-### 后端接口
-Notepad 应用程序的后端接口路径为 /api/notepad，您可以自行进行定制化开发。下面是 Notepad 应用程序支持的所有后端接口列表：
-
-以下是后端接口文档：
-
-#### 获取所有笔记
 ```
-GET /api/notepad
+请确保将 POSTGRES_URI 替换为你的 PostgreSQL 数据库的实际 URI。
+5. 迁移数据表
+```bash
+npm run migrations:migrate
 ```
-返回数据：
-```json
-[
-  {
-    "id": "616af0b632a3756de48d19b9",
-    "title": "Note Title",
-    "content": "Note Content",
-    "createdAt": "2021-10-16T13:34:46.672Z",
-    "updatedAt": "2021-10-16T13:34:46.672Z"
-  },
-  // ...
-]
-```
-
-#### 更新或者创建笔记
-```
-POST /api/notepad
-```
-请求数据：
-```
-{
-  "title": "Note Title",
-  "content": "Note Content"
-}
-```
-
-#### 删除指定 ID 的笔记
-```
-DELETE /api/notepad?id=ID
-```
+6. 运行 npm run dev 命令启动开发服务器。
+7. 访问 [http://localhost:3000](http://localhost:3000) 查看应用程序。
 
 
 ## 部署
@@ -99,24 +64,11 @@ DELETE /api/notepad?id=ID
 3. 设置以下环境变量：
 ```
 NODE_ENV=production
-MONGODB_URI=<你的 MongoDB 数据库 URI>
+POSTGRES_URL=<你的 PostgreSQL 数据库 URI>
 ```
-请将 MONGODB_URI 替换为你的 MongoDB 数据库的实际 URI。
-
-4. 部署应用程序。
-
-
-### 本地部署
-使用docker-compose部署
-
-1. 运行安装脚本
+请将 POSTGRES_URL 替换为你的 PostgreSQL 数据库的实际 URI。
+4. 迁移数据表
 ```bash
-$ ./install.sh
+npm run migrations:migrate
 ```
-
-2. 运行docker-compose
-```
-$ docker-compose up -d
-```
-
-3. 访问3000端口
+5. 部署应用程序。
