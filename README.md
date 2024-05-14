@@ -15,26 +15,6 @@ Notepad 是一个基于 Web 的轻量级笔记应用程序，支持本地离线�
 * 前端: Next.js、React、Material-UI。
 * 后端: Vercel Serverless Functions、PostgreSQL。
 
-## 安装
-
-1. 访问网址 [https://notepad-nine.vercel.app/](https://notepad-nine.vercel.app/)
-![](./screenshots/notepad-install-setp1.png)
-2. 在右上角会出现一个安装提示，点击它安装应用。
-![](./screenshots/notepad-install-setp2.png)
-3. 安装完成后，应用会自动打开。你可以在 Chrome 浏览器的“应用”页面中查看已安装的应用。
-![](./screenshots/notepad-pwa.png)
-
-
-## 截图
-Web
-![](./screenshots/web-note.png)
-
-移动端
-![](./screenshots/mobile-note.png)
-
-
-暗色
-![](./screenshots/dark-mode.gif)
 
 ## 开发
 1. 在本地环境中运行后端应用程序所需的 MongoDB 数据库实例。
@@ -72,3 +52,24 @@ POSTGRES_URL=<你的 PostgreSQL 数据库 URI>
 npm run migrations:migrate
 ```
 5. 部署应用程序。
+
+## 安装
+
+1. 访问网址 [https://notepad-nine.vercel.app/](https://notepad-nine.vercel.app/)
+![](./screenshots/notepad-install-setp1.png)
+2. 在右上角会出现一个安装提示，点击它安装应用。
+![](./screenshots/notepad-install-setp2.png)
+3. 安装完成后，应用会自动打开。你可以在 Chrome 浏览器的“应用”页面中查看已安装的应用。
+![](./screenshots/notepad-pwa.png)
+
+
+## 截图
+Web
+![](./screenshots/web-note.png)
+
+移动端
+![](./screenshots/mobile-note.png)
+
+
+暗色
+![](./screenshots/dark-mode.gif)
