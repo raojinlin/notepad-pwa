@@ -1,23 +1,27 @@
 version: "3"
 services:
-  mongodb:
-    image: mongodb/mongodb-community-server:latest
+  postgres:
+    image: postgres:latest
     volumes:
-      - mongodb-db:/data/db
-      - mongodb-configdb:/data/configdb
+      - postgres-db:/var/lib/postgres/data
+    environment:
+      - POSTGRES_PASSWORD=123456
   notepad:
     depends_on:
-    - mongodb
+    - postgres
     build:
       dockerfile: ./Dockerfile
       context: ./
     ports:
       - "3000:3000"
+    env_file:
+      - ./.env
     environment:
-      MONGODB_URI: "mongodb://mongodb:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=notepad"
+      POSTGRES_URI: "postgres://postgres:123456@postgres:5432"
+      POSTGRES_HOST: postgres
+      ALLOW_USER_REGISTER: true
+      SESSION_SECRET: Y0zMbk04WQX1dtpX8jJbYFA5+P6OBfUVXQjJZbde/uY=
 
 volumes:
-  mongodb-db:
-    external: true
-  mongodb-configdb:
+  postgres-db:
     external: true

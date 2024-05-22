@@ -2,3 +2,6 @@ node_modules/
 .next/
 .vercel/
 ./package-lock.json
+.env
+.env.local
+.env.prod

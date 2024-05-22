@@ -18,6 +18,7 @@
     "@mui/icons-material": "^5.11.11",
     "@mui/material": "^5.11.13",
     "@mui/x-date-pickers": "^7.2.0",
+    "@neondatabase/serverless": "^0.9.3",
     "@vercel/postgres": "^0.8.0",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^2.4.3",
@@ -36,12 +37,14 @@
     "next-api-middleware": "^3.0.0",
     "next-connect": "^1.0.0-next.4",
     "next-pwa": "^5.6.0",
+    "postgres": "^3.4.4",
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "server-only": "^0.0.1",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7",
     "util": "^0.12.5",
-    "vercel": "^28.17.0"
+    "vercel": "^28.17.0",
+    "tsx": "^4.10.2"
   }
 }

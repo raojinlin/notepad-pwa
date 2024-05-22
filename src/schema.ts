@@ -9,12 +9,14 @@ import {
   varchar,
   integer,
 } from 'drizzle-orm/pg-core';
-import { drizzle } from 'drizzle-orm/vercel-postgres';
 
 
-import { sql } from "@vercel/postgres";
+import postgres from 'postgres';
 
-export const db = drizzle(sql);
+import { drizzle } from 'drizzle-orm/postgres-js';
+
+
+export const db = drizzle(postgres(process.env.POSTGRES_URL));
 
 export const UserTable = pgTable(
   'users',
@@ -93,7 +95,7 @@ export const NoteShareTable = pgTable('nt_note_share', {
   userID: serial('userID').notNull(),
   noteID: text('noteID').notNull(),
   password: text('password').default(''),
-  public: boolean('public').default(false), 
+  public: boolean('public').default(false),
   accessCount: serial('accessCount'),
   expiredAt: timestamp('expiredAt').default(null),
   createdAt: timestamp('createdAt').defaultNow().notNull(),

@@ -10,8 +10,8 @@ export const GET = async (req: NextRequest) => {
     if (!session || !session.userID) {
         return NextResponse.redirect(new NextURL('/login', req.url));
     }
-    
-    await new Auth().logout();
+
+    await new Auth().logout(session.userID, req.cookies.get('auth_id')?.value || '');
     const res = NextResponse.redirect(new NextURL('/login', req.url));
     res.cookies.delete('auth_id');
     return res;
