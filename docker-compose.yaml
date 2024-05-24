@@ -3,6 +3,7 @@ services:
   postgres:
     image: postgres:latest
     volumes:
+      - ./init-db.sql://docker-entrypoint-initdb.d/init-db.sql
       - postgres-db:/var/lib/postgres/data
     environment:
       - POSTGRES_PASSWORD=123456
@@ -17,7 +18,7 @@ services:
     env_file:
       - ./.env
     environment:
-      POSTGRES_URI: "postgres://postgres:123456@postgres:5432"
+      POSTGRES_URL: "postgres://postgres:123456@postgres:5432"
       POSTGRES_HOST: postgres
       ALLOW_USER_REGISTER: true
       SESSION_SECRET: Y0zMbk04WQX1dtpX8jJbYFA5+P6OBfUVXQjJZbde/uY=

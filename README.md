@@ -27,7 +27,7 @@ SESSION_SECRET=xxxxxxxxxxxxxxxx # session secret
 POSTGRES_URL="postgres://<username>:<password>@<POSTGRES_URL>/<database>"
 
 ```
-请确保将 POSTGRES_URI 替换为你的 PostgreSQL 数据库的实际 URI。
+请确保将 POSTGRES_URL 替换为你的 PostgreSQL 数据库的实际 URL。
 5. 迁移数据表
 ```bash
 npm run migrations:migrate
@@ -52,6 +52,23 @@ POSTGRES_URL=<你的 PostgreSQL 数据库 URI>
 npm run migrations:migrate
 ```
 5. 部署应用程序。
+
+
+### 使用Docker部署
+1. 创建volume
+```bash
+docker volume create postgres-db
+```
+2. 启动容器
+```bash
+docker compose up -d
+```
+
+3. 迁移数据表
+```bash
+docker exec notepad-pwa-notepad-1 npm run migrations:migrate
+```
+
 
 ## 安装
 
