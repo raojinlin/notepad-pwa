@@ -1,5 +1,5 @@
 import './globals.css'
-import Pwa from "@/app/pages/Pwa";
+import Pwa from "./pages/Pwa";
 
 export const metadata = {
   title: 'Notepad',

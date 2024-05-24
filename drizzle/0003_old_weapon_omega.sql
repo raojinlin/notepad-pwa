@@ -1,0 +1,1 @@
+ALTER TABLE "nt_notepad" ADD COLUMN "noteID" text DEFAULT '';

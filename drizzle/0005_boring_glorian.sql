@@ -1,0 +1,1 @@
+CREATE UNIQUE INDEX IF NOT EXISTS "unique_note" ON "nt_notepad" ("noteID");
