@@ -14,7 +14,7 @@ import {
 import postgres from 'postgres';
 
 import { drizzle } from 'drizzle-orm/postgres-js';
-import { getPostgresURL } from './lib/auth';
+import { getPostgresURL } from './utils';
 
 
 export const db = drizzle(postgres(getPostgresURL()));

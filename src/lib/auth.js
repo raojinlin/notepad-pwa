@@ -77,16 +77,3 @@ export default class Auth {
         }
     }
 }
-
-export const getPostgresURL = () => {
-  if (!process.env.POSTGRES_URL) {
-    return '';
-  }
-
-  const url = new URL(process.env.POSTGRES_URL);
-  if (url.hostname.includes('postgres.vercel-storage.com') && !url.searchParams.get('sslmode')) {
-    url.searchParams.set('sslmode');
-  }
-
-  return url.toString();
-}
