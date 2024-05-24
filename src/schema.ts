@@ -16,6 +16,7 @@ import postgres from 'postgres';
 import { drizzle } from 'drizzle-orm/postgres-js';
 
 
+console.log('POSTGRES_URL', process.env.POSTGRES_URL)
 export const db = drizzle(postgres(process.env.POSTGRES_URL));
 
 export const UserTable = pgTable(
