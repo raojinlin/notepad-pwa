@@ -32,7 +32,7 @@ export const getPostgresURL = () => {
 
   const url = new URL(process.env.POSTGRES_URL);
   if (url.hostname.includes('postgres.vercel-storage.com') && !url.searchParams.get('sslmode')) {
-    url.searchParams.set('sslmode');
+    url.searchParams.set('sslmode', 'required');
   }
 
   return url.toString();
