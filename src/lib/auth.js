@@ -36,7 +36,7 @@ export default class Auth {
 
         const expiredAt = dayjs().add(24, 'hour').$d
         const sessionPayload = {userID: user.id, expiredAt};
-        const sessionKey = await encrypt(sessionPayload); 
+        const sessionKey = await encrypt(sessionPayload);
         sessionKey.toString();
         const session = await db
             .insert(UserSession)
@@ -76,4 +76,17 @@ export default class Auth {
             throw err;
         }
     }
-} 
+}
+
+export const getPostgresURL = () => {
+  if (!process.env.POSTGRES_URL) {
+    return '';
+  }
+
+  const url = new URL(process.env.POSTGRES_URL);
+  if (url.hostname.includes('postgres.vercel-storage.com') && !url.searchParams.get('sslmode')) {
+    url.searchParams.set('sslmode');
+  }
+
+  return url.toString();
+}

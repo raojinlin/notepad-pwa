@@ -14,10 +14,10 @@ import {
 import postgres from 'postgres';
 
 import { drizzle } from 'drizzle-orm/postgres-js';
+import { getPostgresURL } from './lib/auth';
 
 
-console.log('POSTGRES_URL', process.env.POSTGRES_URL)
-export const db = drizzle(postgres(process.env.POSTGRES_URL));
+export const db = drizzle(postgres(getPostgresURL()));
 
 export const UserTable = pgTable(
   'users',
